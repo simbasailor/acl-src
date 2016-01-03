@@ -52,3 +52,58 @@
       n
       (our-lenght (cdr lst) (+ n 1))))
 
+;; 2.14 functions as objects
+
+;; the function apply can be given any number of arguments,
+;; so long as the last is a list
+(apply #'+ '(1 2 3))
+(apply #'+ 1 2 '(3 4 5))
+
+;; The function funcall dose the same thing but does not need
+;; the arguments to be packaged in a list
+(funcall #'+ 1 2 3)
+
+;; lambda just a symbal, not an operator
+(lambda (x y)
+  (+ x y))
+
+;; A lambda expression can be considered as the name of a function.
+;; an ordinary function name, a lambda expression can be the first element
+;; of a function call,
+((lambda (x) (+ x 100)) 1)
+(funcall #'(lambda (x) (+ x 100)) 1)
+(apply #'(lambda (x) (+ x 100)) '(1))
+
+;; chapter2 exercises
+
+;; 7. Using only operator introduced in the chapter,
+;; define a function that takes a list as an argumnet
+;; and returns true if on of its elements is a list
+(defun element-has-list (lst)
+  (if (null lst)
+      nil
+      (if (listp (car lst))
+	  t
+	  (element-has-list (cdr lst)))))
+
+;; 8. Give iterative and recursive definitions of a function that
+;;  a. takes a positive integer and prints that many dots.
+;;  b. takes a list and returns the number of times the symbol a occurs in it.
+
+;; a. A iterative version
+(defun prints-dots (n)
+  (let ((dot "."))
+    (do ((i 1 (+ i 1)))
+	((> i n) 'done)
+      (format t "~A" dot))))
+
+;; a. A recursive version
+(defun prints-dots (n)
+  (if (<= n 0)
+      'done
+      (progn
+	(format t ".")
+	(prints-dots (- n 1)))))
+
+;; b. a iterative version
+
