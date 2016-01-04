@@ -129,6 +129,10 @@
    (consp lst)
    (cons (cons (car lst) (count-first-symbol lst)) (symbol-occur-times (remove (car lst) lst)))))
 
+;; 9. A friend is trying to write a function that returns the sum of
+;; all the non-nil elements in a list. He has written two versions of
+;; this function, and neither of them work. Explain what's wrong with
+;; each,and give a correct version:
 ;; 9. (a) it can work.
 (defun summit (lst)
   (remove nil lst)
