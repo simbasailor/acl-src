@@ -1,3 +1,5 @@
+;; chapter 2
+
 (defun our-member (obj lst)
   (if (null lst)
       nil)
@@ -106,4 +108,37 @@
 	(prints-dots (- n 1)))))
 
 ;; b. a iterative version
+(defun count-first-symbol (lst)
+  (let ((obj (car lst)) (count 0))
+    (dolist (item lst)
+      (if (equal obj item)
+          (setf count (+ count 1))))
+    count))
 
+(defun symbol-occur-times (lst)
+  (let ((target-lst nil) (find-lst lst))
+    (do ()
+        ((null find-lst) target-lst)
+      (progn
+        (setf target-lst (cons (cons (car find-lst) (count-first-symbol find-lst)) target-lst))
+        (setf find-lst (remove (car find-lst) find-lst))))))
+
+;; a recursive version
+(defun symbol-occur-times (lst)
+  (and
+   (consp lst)
+   (cons (cons (car lst) (count-first-symbol lst)) (symbol-occur-times (remove (car lst) lst)))))
+
+;; 9. (a) it can work.
+(defun summit (lst)
+  (remove nil lst)
+  (apply #'+ lst))
+
+;; 9. (b)
+(defun summit (lst)
+  (if (null lst)
+      0
+      (let ((x (car lst)))
+        (and
+         x ;; (numberp x)
+         (+ x (summit (cdr lst)))))))
