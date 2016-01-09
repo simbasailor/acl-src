@@ -226,6 +226,15 @@
 ;; many arguments as there are sequences, and arguments are drawn on at
 ;; a time from all the sequences:
 (every #'> '(1 3 5) '(0 2 4))  ;; => T
-;; If the sequnces are of different lengths, the shortst on determines the
+;; If the sequences are of different lengths, the shortst on determines the
 ;; number of tests performed.
+
+;; 3.12 Stacks
+;; (push obj lst) =is equivalent to=> (setf lst (cons obj lst))
+;; (pop lst) =is equivalent to=> (let ((x (car lst))) (setf lst (cdr lst)) x)
+(defun our-reverse (lst)
+  (let ((acc nil))
+    (dolist (elt lst)
+      (push elt acc))
+    acc))
 
