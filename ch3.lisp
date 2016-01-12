@@ -238,3 +238,68 @@
       (push elt acc))
     acc))
 
+;; The pushnew macro is a variant of push that uses adjoin instead
+;; of cons:
+(let ((x '(a b)))
+  (pushnew 'c x)
+  (pushnew 'a x))
+;; => (C A B)
+
+;; 3.13 Dotted Lists
+
+;; proper list (正规列表)
+(defun proper-list? (x)
+  (or (null x)
+      (and (consp x)
+	   (proper-list? (cdr x)))))
+
+;; Dotted list
+(setf pair (cons 'a 'b))  ;; => (A . B)
+
+;; 3.14 Assoc-lists (关联列表 assoc-listor alist)
+(setf trans '((+ . "add") (- . "subtract")))
+;; => ((+ . "add") (- . "subtract"))
+
+(assoc '+ trans)  ;; => (+ . "add")
+
+(assoc '- trans)  ;; => (- . "subtract")
+
+(assoc '* trans)  ;; => nil
+;; Like member, the real assoc takes key word arguments, including
+;; :test and :key. Common lisp also defines an assoc-if, which is to
+;; assoc what member-if is to member.
+
+(defun our-assoc (key alist)
+  (and (consp alist)
+       (let ((pair (car alist)))
+	 (if (eql key (car pair))
+	     pair
+	     (our-assoc key (cdr alist))))))
+
+;; 3.15 Example: Shortest Path
+
+(setf i-min '((a b c) (b c) (c d)))
+;; A -> B
+;;  \  /
+;;   C -> D
+
+(defun shortest-path (start end net)
+  (bfs end (list (list start)) net))
+
+(defun bfs (end queue net)
+  (if (null queue)
+      nil
+      (let ((path (car queue)))
+	(let ((node (car path)))
+	  (if (eql node end)
+	      (reverse path)
+	      (bfs end
+		   (append (cdr queue)
+			   (new-paths path node net))
+		   net))))))
+
+(defun new-paths (path node net)
+  (mapcar #'(lambda (n)
+	      (cons n path))
+	  (cdr (assoc node net))))
+
