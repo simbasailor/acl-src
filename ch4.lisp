@@ -70,6 +70,8 @@
 ;; The most general is to use format. Calling format with nil as the first
 ;; argument makes it return as a string what it would have printed:
 (format nil "~A or ~A" "truth" "dare")
+
+;; 4.4 Sequences
 ;; But if you just want to join several strings together, you can use
 ;; concatenat, which takes a symbol indicting the type of the result,
 ;; plus on or more sequences:

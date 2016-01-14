@@ -2341,7 +2341,7 @@ we're looking for, then we're done. Otherwise, we continue searching in
 either the left or right half of the vector, depending on whether the object was
 less than or greater than the middle element.
      Figure 4.1 contains a function that works this way. Two functions actually:
-b i n - s e a r c h sets the initial bounds and sends control to finder, which
+bin-search sets the initial bounds and sends control to finder, which
 searches for obj between the s t a r t t h and endth elements of a vector vec.
      If the range to be searched has narrowed to one element, then finder
 returns that element if it is obj, and n i l otherwise. If the range includes
@@ -2435,7 +2435,7 @@ string what it would have printed:
        We've already seen four functions for retrieving elements of sequences:
    nth for lists, aref and svref for vectors, and char for strings. Common
    Lisp also provides a function e l t that works for sequences of any kind:
-   > ( e l t ' (a b c) 1)
+   > ( elt ' (a b c) 1)
   B
   For sequences of specific types, the access functions we've already seen
   should be faster, so there is no point in using e l t except in code that is
