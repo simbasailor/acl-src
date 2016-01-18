@@ -2687,24 +2687,24 @@ p o i n t - p to test whether something is a point,
        We can also control things like the way a structure is displayed, and the
  prefix used in the names of the access functions it creates. Here is a more
  elaborate definition for p o i n t that does both:
- ( d e f s t r u c t (point (:cone-name p)
-                               (.•print-function                 print-point))
+ (defstruct (point (:cone-name p)
+                   (:print-function print-point))
      (x 0)
      (y o))
  (defun print-point (p stream depth)
      (format stream "#<~A,~A>M (px p) (py p)))
 The : cone-name argument specifies what should be concatenated to the
 front of the field names to make access functions for them. By default it was
-p o i n t - ; now it will be simply p. Not using the default makes your code a
+point - ; now it will be simply p. Not using the default makes your code a
 little less readable, so you would only want to do this kind of thing if you're
 going to be using the access functions constantly.
-      The : pr i n t - f unct ion is the name of the function that should be used to
+      The : print - function is the name of the function that should be used to
 print a point when it has to be displayed—e.g. by the toplevel. This function
 must take three arguments: the structure to be printed, the place where it is
 to be printed, and a third argument that can usually be ignored.2 We will
     2
-      In ANSI Common Lisp, you can give instead a : p r i n t - o b j e c t argument, which only takes
-the first two arguments. There is also a macro p r i n t - u n r e a d a b l e - o b j e c t , which should be
+      In ANSI Common Lisp, you can give instead a : print-object argument, which only takes
+the first two arguments. There is also a macro print-unreadable-object , which should be
 used, when available, to display objects in # < . . . > syntax.
  4.7                            EXAMPLE: BINARY SEARCH TREES                        71
                                               CO
@@ -2715,11 +2715,11 @@ used, when available, to display objects in # < . . . > syntax.
                              Figure 4.4: A binary search tree.
 deal with streams in Section 7.1. For now, suffice it to say that the stream
 argument can simply be passed on to format.
-      The function p r i n t - p o i n t will display points in an abbreviated form:
+      The function print-point will display points in an abbreviated form:
  > (make-point)
 #<0,0>
 4.7 Example: Binary Search Trees
-Because s o r t comes built-in, you will rarely, if ever, have to write sort
+Because sort comes built-in, you will rarely, if ever, have to write sort
 routines in Common Lisp. This section shows how to solve a related problem
 for which no ready-made solution is provided: maintaining a sorted collection
 of objects. The code in this section will store objects in binary search trees,
@@ -2733,10 +2733,10 @@ The fundamental data structure will be the node, which has three fields: one
 for the object stored at that node, and one each for the left and right children
 of the node. You could think of a node as a cons cell with one car and two
 cdrs.
-      A BST is either n i l , or a node whose 1 and r fields are BSTs. As lists can
+      A BST is either nil , or a node whose 1 and r fields are BSTs. As lists can
 be built by successive calls to cons, BSTs will be built by successive calls to
-b s t - i n s e r t . This function takes an object, a BST, and an ordering function,
-and returns a BST that contains the object. Like cons, b s t - i n s e r t does not
+bst-insert . This function takes an object, a BST, and an ordering function,
+and returns a BST that contains the object. Like cons, bst-insert does not
 modify the BST given as the second argument. Here's how we would use it to
 build a BST:
 72                    SPECIALIZED DATA STRUCTURES
@@ -2776,25 +2776,25 @@ build a BST:
           (or (bst-max (node-r bst)) bst)))
          Figure 4.5: Binary search trees: Lookup and insertion.
  4.7                        EXAMPLE: BINARY SEARCH TREES                          73
- > (setf nums n i l )
+ > (setf nums nil)
  NIL
- > ( d o l i s t ( x ' ( 5 8 4 2 1 9 6 7 3))
-       (setf nums ( b s t - i n s e r t x nums # ' < ) ) )
+ > (dolist (x '(5 8 4 2 1 9 6 7 3))
+       (setf nums (bst-insert x nums # ' < )))
  NIL
  At this point the structure of nums corresponds to the tree shown in Figure 4.4.
-     We can use b s t - f ind, which takes the same arguments as b s t - i n s e r t ,
+     We can use bst - find, which takes the same arguments as bst-insert,
 to find objects within a BST. The description of the node structure mentioned
 that it was like a cons cell with two cdrs. The analogy becomes clearer when
-we compare the definition of b s t - f ind to the definition of our-member on
+we compare the definition of bst-find to the definition of our-member on
 page 16.
-     Like member, b s t - f ind returns not just the sought-for element, but the
+     Like member, bst-find returns not just the sought-for element, but the
 subtree of which it is the root:
 > (bst-find 12 nums #'<)
 NIL
 > (bst-find 4 nums #'<)
 #<4>
 This allows us to distinguish between failing to find something, and succeed-
-ing in finding n i l .
+ing in finding nil .
      Finding the least and greatest elements of a BST is easy. To find the least,
 we keep following left children, as in bst-min. To find the greatest, we keep
 following right children, as in bst-max:
@@ -2897,7 +2897,7 @@ has no required arguments:
 Like functions, hash tables are always displayed in #<.. .> form.
       A hash table, like an assoc-list, is a way of associating pairs of objects.
 To retrieve the value associated with a given key, we call gethash with a key
-and a hash table. By default, gethash returns n i l when there is no value
+and a hash table. By default, gethash returns nil when there is no value
 associated with the key.
 > (gethash ' c o l o r h t )
 MIL
@@ -2906,7 +2906,7 @@ Here we see for the first time one of the distinctive features of Common Lisp:
 an expression can return multiple values. The function gethash returns two.
 The first is the value associated with the key, and the second says whether
 the hash table has any value stored under that key. Because the second value
-is n i l , we know that the first n i l was returned by default, not because n i l
+is nil , we know that the first nil was returned by default, not because nil
 was explicitly associated with color.
       Most implementations will display all the return values of a call made at
 the toplevel, but code that expects only one return value will get just the first.
@@ -2929,7 +2929,7 @@ could use a hash table with functions as keys and strings as entries:
  > (push "Doesn't t a k e keyword arguments."
              (gethash #'our-member bugs))
  ("Doesn't take keyword arguments.")
-Since gethash returns n i l by default, and push is an abbreviation for a
+Since gethash returns nil by default, and push is an abbreviation for a
 setf, we can simply push new strings into the entry for a function. (The
 offending our-member is defined on page 16.)
      You can use hash tables instead of lists to represent sets. When the sets
@@ -2944,7 +2944,7 @@ Then to test for membership you just call gethash:
 > (gethash ' a p r i c o t   fruit)
 T
 T
-Since gethash returns n i l by default, a new-made hash table is also, conve-
+Since gethash returns nil by default, a new-made hash table is also, conve-
 niently, an empty set.
      To remove an object from a set, you would call remhash, which removes
 an entry from a hash table:
@@ -2966,7 +2966,7 @@ SHAPE = SPHERICAL
 SIZE = GIANT
 COLOR = RED
 NIL
-It always returns n i l , but you can save the values by passing a function that
+It always returns nil , but you can save the values by passing a function that
 will accumulate them in a list.
        Hash tables can accommodate any number of elements, because they are
 expanded when they run out of space. If you want to ensure that a hash
@@ -3073,12 +3073,12 @@ from anywhere in a body of code. The second argument to return-from is
 returned as the value of the block named by the first. Expressions after the
 return-from are not evaluated.
     There is also a return macro, which returns its argument as the value of
-an enclosing block named n i l :
-> (block n i l
+an enclosing block named nil :
+> (block nil
       (return 27))
 27
 Many Common Lisp operators that take a body of expressions implicitly
-enclose the body in a block named n i l . All iteration constructs do, for
+enclose the body in a block named nil . All iteration constructs do, for
 example:
 > (dolist (x ' (a b c d e))
       (format t "~A " x)
@@ -3178,7 +3178,7 @@ example is equivalent to:
   ( l e t ((x 1))
        ( l e t ((y (+ x 1)))
            (+ x y ) ) )
- In both l e t and l e t * , initial values default to n i l . Such variables need not
+ In both l e t and l e t * , initial values default to nil . Such variables need not
  be enclosed within lists:
  > ( l e t (x y)
            ( l i s t x y))
@@ -3236,7 +3236,7 @@ cond. If there are no expressions after the successful condition
 the value of the condition itself is returned.
      Since a cond clause with a condition of t will always succeed, it is
 conventional to make the final, default clause have t as the condition. If
-no clause succeeds, the cond returns n i l , but it is usually bad style to take
+no clause succeeds, the cond returns nil , but it is usually bad style to take
 advantage of this return value. (For an example of the kind of problem that
 can occur, see page 292.)
      When you want to compare a value against a series of constants, there is
@@ -3261,7 +3261,7 @@ against the keys in each clause. Then come zero or more clauses, each one
  succeeds, or the successful clause contains only keys,
  > (case 99 (99))
  NIL
- then the case returns n i l .
+ then the case returns nil .
      The typecase macro is similar to case, except that the keys in each clause
  should be type specifiers, and the value of the first argument is compared to
  the keys using typep instead of eql. (An example of typecase appears on
@@ -3276,7 +3276,7 @@ specifications for variables, each possibly of the form
                                {variable initial update)
 The initial and update forms are optional. If the update form is omitted, the
 variable won't be updated on successive iterations. If the initial form is also
-omitted, the variable will be initially n i l .
+omitted, the variable will be initially nil .
      In the example on page 23,
  (defun show-squares (start end)
     (do ((i start (+ i 1)))
@@ -3315,7 +3315,7 @@ update form refers to a variable that has its own update form, does it get the
 A B CD
 DONE
 The third expression within the initial list will be evaluated and returned as
-the value of the d o l i s t when iteration terminates. It defaults to n i l .
+the value of the d o l i s t when iteration terminates. It defaults to nil .
      Similar in spirit is dotimes, which for some n iterates over the integers
 fromOtow-1:
 > (dotimes (x 5 x)
@@ -3323,7 +3323,7 @@ fromOtow-1:
 0 12 3 4
 5
 As with d o l i s t , the third expression in the initial list is optional and defaults
-to n i l . Notice that it can refer to the iteration variable.
+to nil . Notice that it can refer to the iteration variable.
      The function mapc is like mapcar but does not cons up a new list as a
 return value, so the only reason to use it is for side-effects. It is more flexible
 than d o l i s t , because it can traverse multiple lists in parallel:
@@ -3365,12 +3365,12 @@ built-in get-decoded-time returns the current time in nine values: second,
  90                                  CONTROL
  minute, hour, date, month, day, and two others.
      Multiple values also make it possible to have lookup functions that can
- distinguish between finding n i l and failing to find something. This is why
+ distinguish between finding nil and failing to find something. This is why
  gethash returns two values. Because it uses the second value to indicate
- success or failure, we can store n i l in a hash table just like any other value.
+ success or failure, we can store nil in a hash table just like any other value.
      The values function returns multiple values. It returns exactly the values
  you give it as arguments:
- > (values 'a n i l ( + 2 4))
+ > (values 'a nil ( + 2 4))
 A
 NIL
 6
@@ -3386,7 +3386,7 @@ discarded:
       x)
 1
      By using values with no arguments, it's possible to return no values. In
-that case, something expecting one will get n i l :
+that case, something expecting one will get nil :
 > (values)
 > ( l e t ((x (values)))
       x)
@@ -3399,7 +3399,7 @@ NIL
        (list x y z))
 (1 2 NIL)
  5.6                                            ABORTS                                     91
- If there are more variables than values, the leftover ones will be n i l . If there
+ If there are more variables than values, the leftover ones will be nil . If there
  are more values than variables, the extra values will be discarded. So to print
 just the time we might write:0
  > (multiple-value-bind (s m h) (get-decoded-time)
@@ -3780,7 +3780,7 @@ parameters.) If the symbol feoptional occurs in the parameter list of a
 function,
  (defun philosoph ( t h i n g feoptional            property)
       ( l i s t thing ' i s property))
-then all the arguments after it are optional, and default to n i l :
+then all the arguments after it are optional, and default to nil :
 > (philosoph 'death)
 (DEATH IS NIL)
 We give an explicit default by enclosing it in a list with the parameter. This
@@ -3805,7 +3805,7 @@ KEYLIST
  (1 NIL 2 NIL)
 > (keylist 1 :y 3 :x 2)
  ( 1 2 3 NIL)
-Like ordinary optional parameters, keyword parameters default to n i l , but
+Like ordinary optional parameters, keyword parameters default to nil , but
 explicit defaults may be specified in the parameter list.
      Keywords and their associated arguments can be collected in rest param-
 eters and passed on to other functions that are expecting them. For example,
@@ -3904,7 +3904,7 @@ we could say:
                      10)
   (85 40 73 64 28 21 40 67 5 32)
 The definition of map-int illustrates one of the standard Lisp idioms for
-building a list. We create an accumulator ace, initially n i l , and push suc-
+building a list. We create an accumulator ace, initially nil , and push suc-
 cessive objects onto it. When we're finished, we reverse the accumulator.1
       We see the same idiom in f i l t e r . This function takes a function and a
 list, and returns all the non-nil values returned by the function as it is applied
@@ -4222,7 +4222,7 @@ seem to be three main reasons why:
           volve side-effects.
      2. Recursive data structures. Lisp's implicit use of pointers makes it easy
           to have recursively defined data structures. The most common is the
-          list: a list is either n i l , or a cons whose cdr is a list.
+          list: a list is either nil , or a cons whose cdr is a list.
      3. Elegance. Lisp programmers care a great deal about the beauty of their
           programs, and recursive algorithms are often more elegant than their
           iterative counterparts.
@@ -4336,7 +4336,7 @@ Exercises
 118                                 FUNCTIONS
    7. Define a function that takes one argument, a number, and returns true
       if it is greater than the argument passed to the function the last time it
-      was called. The function should return n i l the first time it is called.
+      was called. The function should return nil the first time it is called.
    8. Suppose expensive is a function of one argument, an integer between
       0 and 100 inclusive, that returns the result of a time-consuming com-
       putation. Define a function frugal that returns the same answer, but
@@ -4447,7 +4447,7 @@ NIL
  is true only if r e a d - l i n e ran out of input before encountering a newline.)
       In the general case, r e a d - l i n e takes four optional arguments: a stream;
  an argument to tell whether or not to cause an error on encountering end-
- of-file; what to return instead if the previous argument is n i l ; and a fourth
+ of-file; what to return instead if the previous argument is nil ; and a fourth
  argument (discussed on page 235) that can usually be ignored.
       So to display the contents of a file at the toplevel, we might use the
  following function:
@@ -4518,14 +4518,14 @@ Both return their first argument—which, incidentally, is displayed by p r i n 
 The function t e r p r i just prints a newline.
      It is useful to have these functions as background when explaining the
 behavior of the more general format. This function can be used for almost
-all output. It takes a stream (or t or n i l ) , a format string, and zero or more
+all output. It takes a stream (or t or nil ) , a format string, and zero or more
  124                              INPUT AND OUTPUT
  additional arguments. The format string may containformat directives, which
  are preceded by a ~ (tilde). Some format directives act as placeholders in
  the string. Their places will be taken by the representations of the arguments
 given after the format string.
      If we give t as the first argument, output is sent to * s t a n d a r d - output*.
-If we give n i l , format returns as a string what it would have printed. For
+If we give nil , format returns as a string what it would have printed. For
 the sake of brevity we'll do this in all the examples here.
      Depending on one's point of view, format is either amazingly powerful
 or horribly complex. There are a large number of format directives, only a
@@ -4559,7 +4559,7 @@ right-justified floating-point numbers, can take up to five:
        blank.
   7.4                     EXAMPLE: STRING SUBSTITUTION                         125
  Here is a rare example with all five arguments:
- > (format n i l " " 1 0 , 2 , 0 , ' * , ' F" 26.21875)
+ > (format nil " " 1 0 , 2 , 0 , ' * , ' F" 26.21875)
            26.22"
  This is the original number rounded to 2 decimal places, (with the decimal
  point shifted left 0 places), right-justified in a field of 10 characters, padded
@@ -4569,14 +4569,14 @@ right-justified floating-point numbers, can take up to five:
       All these arguments are optional. To use the default you can simply omit
  the corresponding argument. If all we want to do is print a number rounded
  to two decimal places, we can say:
- > (format n i l " ~ , 2 , , , F " 26.21875)
+ > (format nil " ~ , 2 , , , F " 26.21875)
  "26.22"
  You can also omit a series of trailing commas, so the more usual way to write
  the preceding directive would be:
- > (format n i l "~,2F" 26.21875)
+ > (format nil "~,2F" 26.21875)
  "26.22"
       Warning: When format rounds, it does not guarantee to round up or
-to round down. That is, (format n i l "~,1F" 1.25) could yield either
+to round down. That is, (format nil "~,1F" 1.25) could yield either
  " 1.2" or " 1.3". So if you are using format to display information that the
 user expects to see rounded in one particular way (e.g. dollar amounts), you
 should round the number explicitly before printing it.
@@ -4673,7 +4673,7 @@ These two functions would come with any ring buffer.
       The next two functions are ones that we need specifically for this ap-
  plication: buf-next reads a value from a buffer without popping it, and
  b u f - r e s e t resets the used and new indices to their initial values, s t a r t and
- end. If we have already read all the values up to new, buf-next returns n i l .
+ end. If we have already read all the values up to new, buf-next returns nil .
  It won't be a problem distinguishing this from a real value because we're only
  going to store characters in the buffer.
       Finally, b u f - f l u s h flushes a buffer by writing all the live elements to a
@@ -5480,7 +5480,7 @@ vector whose components are x, y, and z:
 > ( m u l t i p l e - v a l u e - c a l l #'mag ( u n i t - v e c t o r 23 12 47))
  1.0
 And we use mag in d i s t a n c e , which returns the distance between two points
-in 3-space. (Defining the point structure to have a : cone-name of n i l
+in 3-space. (Defining the point structure to have a : cone-name of nil
 means that the access functions for the fields will have the same names as the
 fields: x instead of p o i n t - x , for example.)
       Finally, minroot takes three reals a, b, and c, and returns the smallest
@@ -5503,7 +5503,7 @@ contains only a single field: a color ranging from 0 (black) to 1 (white).
   (defun unit-vector (x y z)
      ( l e t ((d (mag x y z ) ) )
           (values (/ x d) (/ y d) (/ z d ) ) ) )
-  (defstruct (point (:cone-name n i l ) )
+  (defstruct (point (:cone-name nil ) )
      x y z)
   (defun distance              (pi   p2)
      (mag (- (x pi)             (x   p2))
@@ -5520,7 +5520,7 @@ i           ( l e t ( ( d i s c (- (sq b) (* 4 a c ) ) ) )
                                  Figure 9.2: Math utilities.
     The image plane will be the plane defined by the x- and y-axes. The eye
 will be on the z-axis, 200 units from the origin. So to be visible through
-the image plane, the surfaces that get inserted into * world* (initially n i l )
+the image plane, the surfaces that get inserted into * world* (initially nil )
 will have to have negative z coordinates. Figure 9.4 illustrates a ray passing
 through a point on the image plane and hitting a sphere.
     The function tracer takes a pathname and writes an image to the cor-
@@ -5750,7 +5750,7 @@ Exercises
       Write a program to simulate such a contest. Do your results suggest
       that the committee is, in fact, choosing the ten best singers each year?
    4. Define a function that takes 8 reals representing the endpoints of two
-      segments in 2-space, and returns either n i l if the segments do not
+      segments in 2-space, and returns either nil if the segments do not
       intersect, or two values representing the x- and y-coordinates of the
       intersection if they do.
    5. Suppose f is a function of one (real) argument, and that min and max
@@ -5822,7 +5822,7 @@ eval.
 to code. You can coerce a lambda expression into a function,
 > (coerce '(lambda (x) x) ' f u n c t i o n )
 #<Interpreted-Function BF9D96>
-and if you give n i l as the first argument to compile, it will compile a lambda
+and if you give nil as the first argument to compile, it will compile a lambda
 expression given as the second argument.
      'To really duplicate Lisp, eval would have to take a second argument (here env) to represent
 the lexical environment. This model of eval is inaccurate in that it retrieves the function
@@ -5850,17 +5850,17 @@ if you had typed it in yourself.
      Macros are usually defined by calling defmacro. A defmacro looks
 a lot like a def un, but instead of defining the value a call should produce,
 it defines how a call should be translated. For example, a macro to set its
-argument to n i l might be defined as follows:
+argument to nil might be defined as follows:
  (defmacro nil! (x)
     (list 'setf x nil))
-This defines a new operator called n i l ! , which will take one argument. A call
-of the form ( n i l ! a) will be translated into ( s e t f a n i l ) before being
-compiled or evaluated. So if we type ( n i l ! x) into the toplevel,
-> ( n i l ! x)
+This defines a new operator called nil ! , which will take one argument. A call
+of the form ( nil ! a) will be translated into ( s e t f a nil ) before being
+compiled or evaluated. So if we type ( nil ! x) into the toplevel,
+> ( nil ! x)
 NIL
 > x
 NIL
-it is exactly equivalent to typing the expansion, ( s e t f x n i l ) .
+it is exactly equivalent to typing the expansion, ( s e t f x nil ) .
      To test a function, we call it, but to test a macro, we look at its expansion.
 The function macroexpand-1 takes a macro call and generates its expansion:
 > (macroexpand-1 '(nil! x))
@@ -5872,11 +5872,11 @@ T
  longer one.
        The secret to understanding macros is to understand how they are imple-
  mented. Underneath, they're just functions that transform expressions. For
- example, if you pass an expression of the form ( n i l ! a) to this function
+ example, if you pass an expression of the form ( nil ! a) to this function
   (lambda (expr)
-     (apply #'(lambda (x) ( l i s t ' s e t f x n i l ) )
+     (apply #'(lambda (x) ( l i s t ' s e t f x nil ) )
                  (cdr e x p r ) ) )
- it will return ( s e t f a n i l ) . When you use defmacro, you're defining
+ it will return ( s e t f a nil ) . When you use defmacro, you're defining
  a function much like this one. All macroexpand-1 does, when it sees
  an expression whose car is known to be the name of a macro, is pass the
  expression to the corresponding function.
@@ -5899,10 +5899,10 @@ templates:
 > ( ( a i s ,a and b i s ,b)
  (A IS 1 AND B IS 2)
 By using backquote instead of a call to l i s t , we can write macro definitions
-that look like the expansions they will produce. For example, n i l ! could be
+that look like the expansions they will produce. For example, nil ! could be
 defined as:
-(defmacro n i l ! (x)
-    ' ( s e t f ,x n i l ) )
+(defmacro nil ! (x)
+    ' ( s e t f ,x nil ) )
  164                                      MACROS
        Comma-at is like comma, but splices its argument (which should be a
  list). Instead of the list itself, its elements are inserted in the template:
@@ -6089,7 +6089,7 @@ But this would not work. These two expressions are not equivalent:
  10J                            EXAMPLE: MACRO UTILITIES                        169
   (setf (car (push 1 1st)) (1+ (car (push 1 1st))))
   (incf (car (push 1 1st)))
- If 1st is initially n i l , then the second expression will set it to (2), but the
+ If 1st is initially nil , then the second expression will set it to (2), but the
  first expression would set it to (1 2).
        Common Lisp provides def ine-modif y-macro as a way of writing a
  restricted class of macros on setf. It takes three arguments: the name of
@@ -6112,7 +6112,7 @@ return value is not the modified object.
 Section 6.4 introduced the concept of a utility, a general-purpose operator
 like those that make up Lisp itself. We can use macros to define utilities
 that could not be written as functions. We've seen several examples already:
-n i l ! , ntimes, and while all have to be written as macros, because all have
+nil ! , ntimes, and while all have to be written as macros, because all have
 to control the way in which their arguments are evaluated. This section gives
 some more examples of the kinds of utilities you can write with macros.
 Figure 10.2 contains a selection that have proven their worth in practice.
@@ -6594,7 +6594,7 @@ This defines three classes: stuff, which is just something with a name, and
 ice-cream and topping, which are subclasses of stuff.
       Now here is a second method for combine:
  (defmethod combine ( ( i c ice-cream) (top topping))
-     (format n i l ""A ice-cream with ~A t o p p i n g . "
+     (format nil ""A ice-cream with ~A t o p p i n g . "
                    (name i c )
                    (name t o p ) ) )
 In this call to defmethod the parameters are specialized: each one appears
@@ -6749,7 +6749,7 @@ Perhaps I think I'm hungry in some sense
 NIL
 Regardless of what before- or after-methods get called, the value returned by
 the generic function is the value of the most specific primary method—in this
-case, the n i l returned by format.
+case, the nil returned by format.
       This changes if there are around-methods. If there is an around-method
 specialized for the arguments passed to the generic function, the around-
 method will get called first, and the rest of the methods will only run if
@@ -6979,7 +6979,7 @@ We could imagine it written as:
    (or (eql x y)
          (and (consp y)
                 (our-tailp x (cdr y)))))
-As the definition suggests, every list is a tail of itself, and n i l is a tail of every
+As the definition suggests, every list is a tail of itself, and nil is a tail of every
 proper list.
     In the more complex case, two lists can share structure without either one
 being a tail of the other. This happens when they share a tail in common, as
@@ -7264,7 +7264,7 @@ a d l (for "doubly linked") that we will use to build doubly linked lists. The
 d a t a field of a d l corresponds to the car of a cons, and the r e s t field to
 the cdr. The prev field will be like a cdr that goes in the other direction.
 (Figure 12.11 shows a doubly linked list of three elements.) The empty
-doubly linked list will be n i l , just like the empty list.
+doubly linked list will be nil , just like the empty list.
      By this call to def s t r u c t we define functions corresponding to car, cdr
 and consp for doubly linked lists: d l - d a t a , d l - n e x t , and d l - p . The print-
  12.6                        EXAMPLE: DOUBLY-LINKED LISTS                      205
@@ -7356,8 +7356,8 @@ of arguments and it returns a d l containing them:
 > ( d l - l i s t ' a ' b >c)
 #<DL (A B C)>
 It uses reduce, which, with :from-end true and an : i n i t i a l - v a l u e of
-n i l , makes the preceding call equivalent to
-( d l - i n s e r t 'a ( d l - i n s e r t 'b ( d l - i n s e r t ' c n i l ) ) )
+nil , makes the preceding call equivalent to
+( d l - i n s e r t 'a ( d l - i n s e r t 'b ( d l - i n s e r t ' c nil ) ) )
 If you replaced # ' d l - i n s e r t in the definition of d l - l i s t with # ' cons, it
 would behave like l i s t . Here is the new code in use:
 > (setf d l ( d l - l i s t ' a >b))
@@ -7439,7 +7439,7 @@ might have a parent field that contained another structure/? whose c h i l d
 field in turn contained c:
  210                                                STRUCTURE
  > (progn ( d e f s t r u c t e l t
-                        (parent n i l ) ( c h i l d n i l ) )
+                        (parent nil ) ( c h i l d nil ) )
                     ( l e t ( ( c (make-elt))
                                  (p ( m a k e - e l t ) ) )
                         ( s e t f ( e l t - p a r e n t c) p
@@ -7936,22 +7936,22 @@ A
 When we called vector-push, it incremented the fill pointer and returned
 its old value. As long as the fill pointer is less than the initial argument to
 make-array, we can push new elements onto the vector; when it runs out
-of space, vector-push will return n i l . We could push up to eight more
+of space, vector-push will return nil . We could push up to eight more
 elements onto vec at this point.
  224                                                     SPEED
     (defconstant d i e t (make-array 25000 : f i l l - p o i n t e r 0))
     (defun read-words (from)
          ( s e t f ( f i l l - p o i n t e r d i e t ) 0)
          ( w i t h - o p e n - f i l e ( i n from : d i r e c t i o n :input)
-             (do ((w ( r e a d - l i n e i n n i l :eof)
-                             (read-line in n i l :eof)))
+             (do ((w ( r e a d - l i n e i n nil :eof)
+                             (read-line in nil :eof)))
                      ( ( e q l w :eof))
                   (vector-push w d i e t ) ) ) )
     (defun xform (fn seq) (map-into seq fn seq))
     (defun write-words (to)
          ( w i t h - o p e n - f i l e (out t o           : d i r e c t i o n :output
                                                          : i f - e x i s t s .•supersede)
-             (map n i l #'(lambda (x)
+             (map nil #'(lambda (x)
                                       ( f r e s h - l i n e out)
                                       (princ x out))
                               (xform U n r e v e r s e
@@ -7990,7 +7990,7 @@ a amoeba alba samba marimba...
  the variable's value need not last any longer than the variable does. When
  could the value last longer than the variable? Here's an example:
  (defun o u r - r e v e r s e ( 1 s t )
-    (let ((rev n i l ) )
+    (let ((rev nil ) )
         ( d o l i s t (x 1 s t )
             (push x r e v ) )
        rev))
@@ -8223,7 +8223,7 @@ specifier.
      A type specifier is the name of a type. The simplest type specifiers are
 symbols like i n t e g e r . These form a hierarchy in Common Lisp. At the top
 of the hierarchy is the type t—all objects are of type t . The hierarchy is not
-a tree. There are two paths from n i l to the top, for example: one through
+a tree. There are two paths from nil to the top, for example: one through
 atom, and the other through l i s t and sequence.
      A type is really just a set of objects. Which means that there are as many
 types as there are sets of objects: an infinite number. We can denote some
@@ -8291,8 +8291,8 @@ w r i t e - b y t e . So here is how you might define a function to copy a file:
                                               :element-type 'unsigned-byte)
         ( w i t h - o p e n - f i l e (out t o : d i r e c t i o n :output
                                                :element-type 'unsigned-byte)
-            (do ( ( i ( r e a d - b y t e in n i l -1)
-                            (read-byte in n i l -1)))
+            (do ( ( i ( r e a d - b y t e in nil -1)
+                            (read-byte in nil -1)))
                      ((minusp i ) )
                 ( d e c l a r e (fixnum i ) )
                 (write-byte i out)))))
@@ -8315,7 +8315,7 @@ counters the character, it returns the result of calling the function.
  as:
  (set-macro-character #V
     #'(lambda (stream char)
-              ( l i s t (quote quote) (read stream t n i l t ) ) ) )
+              ( l i s t (quote quote) (read stream t nil t ) ) ) )
 When read encounters an instance of * in a normal context, it will return the
 result of calling this function on the current stream and character. (The func-
 tion ignores this second parameter, which will always be the quote character.)
@@ -8338,7 +8338,7 @@ read-macro that returns a list of integers.
 ( s e t - d i s p a t c h - m a c r o - c h a r a c t e r #\# #\?
     #'(lambda (stream c h a r l char2)
              ( l i s t 'quote
-                         (let ((1st n i l ) )
+                         (let ((1st nil ) )
                             (dotimes (i (+ (read stream t nil t) 1))
                                 (push i 1st))
                             (nreverse 1st)))))
@@ -8352,7 +8352,7 @@ read-macro that returns a list of integers.
  ( s e t - m a c r o - c h a r a c t e r # \ } (get-macro-character # \ ) ) )
  ( s e t - d i s p a t c h - m a c r o - c h a r a c t e r #\# #\{
      #'(lambda (stream c h a r l char2)
-              ( l e t ((accum n i l )
+              ( l e t ((accum nil )
                           ( p a i r ( r e a d - d e l i m i t e d - l i s t # \ } stream t ) ) )
                   (do ( ( i (car p a i r ) (+ i 1)))
                           ((> i (cadr p a i r ) )
@@ -8520,7 +8520,7 @@ something like the following:
              do (princ x))
 0123456789
 NIL
-This loop expression prints the integers from 0 to 9 and returns n i l . The
+This loop expression prints the integers from 0 to 9 and returns nil . The
 first clause,
 for x from 0 t o 9
 contributes code to thefirsttwo phases, causing x to be set to 0 in the prologue,
@@ -8554,7 +8554,7 @@ some kind of value. For example:
 Using in instead of from in the for clauses causes the variable to be set to
 successive elements of a list instead of successive integers.
     In this case the c o l l e c t clause contributes code to all three phases. In
-the prologue an anonymous accumulator is set to n i l ; in the body (1+ x) is
+the prologue an anonymous accumulator is set to nil ; in the body (1+ x) is
 appended to this accumulator; and in the epilogue its value is returned.
     This is the first example to return a particular value. There are clauses
 for explicitly specifying the return value, but in the absence of such clauses,
@@ -8684,7 +8684,7 @@ match:
  Error: No applicable clause.
            Options: :abort, :backtrace
  »
-The regular case will return n i l if no key matches, but since it's bad style to
+The regular case will return nil if no key matches, but since it's bad style to
 take advantage of this return value, you might as well use ecase whenever
 you don't have an otherwise clause.
      The check-type macro takes a place, a type name, and an optional string,
@@ -8723,7 +8723,7 @@ only take advantage of this possibility indirectly, by using macros like
 i g n o r e - e r r o r s . This macro behaves like progn if none of its arguments
 cause an error. But if an error is signalled during the evaluation of one of its
 arguments, execution will not be interrupted. Instead the i g n o r e - e r r o r s
-expression will immediately return two values: n i l and the condition that
+expression will immediately return two values: nil and the condition that
 was signalled.
      For example, if at some point you want the user to be able to enter an
 expression, but you don't want an error to interrupt execution if the input is
@@ -8733,7 +8733,7 @@ syntactically ill-formed, you could write:
     (let ((str (read-line)))
        (or (ignore-errors (read-from-string str))
                nil)))
-This function just returns n i l if the input contains syntax errors:
+This function just returns nil if the input contains syntax errors:
 > (user-input "Please type an expression> ")
 Please type an expression> #°/»@#+! !
 NIL
@@ -8829,13 +8829,13 @@ NIL
 As match compares its arguments element by element, it builds up assign-
 ments of values to variables, called bindings, in the parameter binds. If
 the match is successful, match returns the bindings generated; otherwise, it
-returns n i l . Since not all successful matches generate any bindings, match,
+returns nil . Since not all successful matches generate any bindings, match,
 like gethash, returns a second value to show that the match succeeded:
 250                             EXAMPLE: INFERENCE
 > (match ' (p ?x) »(p ?x))
 NIL
 T
-When match returns n i l and t as above, it indicates a successful match that
+When match returns nil and t as above, it indicates a successful match that
 yielded no bindings. In English, the match algorithm works as follows:
     1. If x and y are eql they match; otherwise,
    2. If x is a variable that has a binding, they match if it matches y; otherwise,
@@ -8938,12 +8938,12 @@ the head of each with the fact it is trying to prove. For each head that matches
  it calls prove on the body, with the new bindings generated by the match.
  The lists of bindings returned by each call to prove are then collected by
 mapcan and returned:
- > (prove-simple ' p a r e n t }(donald nancy) n i l )
+ > (prove-simple ' p a r e n t }(donald nancy) nil )
  (NIL)
- > (prove-simple >child ' (?x ?y) n i l )
+ > (prove-simple >child ' (?x ?y) nil )
  ( ( ( # : ? 6 . NANCY) (#:?5 . DONALD) (?Y . #:?5) (?X . # : ? 6 ) ) )
 Both of the return values above indicate that there is one way to prove what we
-asked about. (A failed proof would return n i l . ) The first example generated
+asked about. (A failed proof would return nil . ) The first example generated
 one empty set of bindings, and the second generated one set of bindings in
 which ?x and ?y were (indirectly) bound to nancy and donald.
        Incidentally, we see here a good example of the point made on page 23.
@@ -9205,7 +9205,7 @@ stream that points to an HTML file. If we call as or p r i n c within the body o
 a page, the output gets sent to the corresponding file.
  16.2                                        HTML UTILITIES                       261
    (defun h t m l - f i l e (base)
-      (format n i l *'~(~A~) .html" base))
+      (format nil *'~(~A~) .html" base))
    (defmacro page (name t i t l e ftrest body)
       ( l e t ( ( t i (gensym)))
           ' ( w i t h - o p e n - f i l e (*standard-output*                          |
@@ -9294,12 +9294,12 @@ a program simple.
      Our new utility will be a variant of mapc. It is defined in Figure 16.6.
 It takes a function and a list, and for each element of the list, calls the
 function with three arguments: that element, the previous element, and the
-next element. (It uses n i l when there is no previous or next element.)
+next element. (It uses nil when there is no previous or next element.)
 > (map3 #'(lambda (&rest args) (princ args))
             '(a b c d))
 (A NIL B) (B A C) (C B D) (D C NIL)
 NIL
-Like mapc it always returns n i l . Situations that call for this kind of utility
+Like mapc it always returns nil . Situations that call for this kind of utility
 arise often. We will see one in the next section, where we want to make each
 page have a link to the previous page and the next one.
      A subset of the general problem happens when you want to do something
@@ -9638,7 +9638,7 @@ changed. The lists are built by precedence, as before.
 call obj, which creates a new object and defines its parents in one step. We
 also redefine r g e t to take advantage of stored precedence lists.
  274                                EXAMPLE: OBJECTS
-    (defvar *objs* n i l )
+    (defvar *objs* nil )
     (defun parents (obj) (gethash -.parents obj))
     (defun (setf parents) (val obj)
         (progl (setf (gethash :parents obj) val)
@@ -9848,15 +9848,15 @@ Figure 17.8 are for referring to these elements:
              the layout of the class or instance from the fourth element on.
        3. The p r e c l i s t field takes the place of the : p r e c l i s t hash table entry
              in the old implementation. It will contain the precedence list of a class,
-             or n i l in an instance.
+             or nil in an instance.
  Because these operators are macros, they can all be used in the first argument
  to s e t f (Section 10.6).
         The macro c l a s s is for creating classes. It takes an optional list of
  superclasses, followed by zero or more property names. It returns an object
  representing a class. The new class will have the union of its local properties
  (that is, property names) and those inherited from all its superclasses.
- > (setf *print-array* n i l
-                  geom-class               ( c l a s s n i l area)
+ > (setf *print-array* nil
+                  geom-class               ( c l a s s nil area)
                   c i r c l e - c l a s s ( c l a s s (geom-class) r a d i u s ) )
  #<Simple-Vector T 5 C6205E>
  Here we create two classes: geom-class has no superclasses, and only one
@@ -9875,11 +9875,11 @@ to indicate that they are uninitialized. To examine the area property of
 > (svref circle-class
                     (+ (position 'area (layout circle-class)) 3))
  :NIL
-     'When classes are displayed, * p r i n t - a r r a y * should be n i l . The first element in the
+     'When classes are displayed, * p r i n t - a r r a y * should be nil . The first element in the
 p r e c l i s t of any class is the class itself, so trying to display the internal structure of a class
 would cause an infinite loop.
      2
-       The vector is coerced to a list simply to see what's in it. With * p r i n t - a r r a y * set to n i l ,
+       The vector is coerced to a list simply to see what's in it. With * p r i n t - a r r a y * set to nil ,
 the contents of a vector would not be shown.
  17.7                                   NEW IMPLEMENTATION                       281
    (declaim ( i n l i n e lookup ( s e t f            lookup)))
@@ -9891,7 +9891,7 @@ the contents of a vector would not be shown.
                           (unless (eq v a l m i l ) ( r e t u r n v a l ) ) ) )
                  ( l e t ( ( v a l (lookup prop o b j ) ) )
                      (if (eq val m i l )
-                             ( r g e t prop ( p a r e n t s obj) n i l )
+                             ( r g e t prop ( p a r e n t s obj) nil )
                              val)))))
    (defun lookup (prop obj)
       ( l e t ((off ( p o s i t i o n prop (layout obj) : t e s t # ' e q ) ) )
@@ -9920,12 +9920,12 @@ tions to read and write their properties. The first function in Figure 17.9 is t
  new definition of r g e t . It is similar in shape to the r g e t in Figure 17.7. The
  two branches of the conditional deal with classes and instances respectively.
      1. If the object is a class, we traverse its precedence list until we find an
-        object in which the value of the desired property is not : n i l . If we
-        don't find one we return : n i l .
+        object in which the value of the desired property is not : nil . If we
+        don't find one we return : nil .
     2. If the object is an instance, we look for the property locally, and make
         a recursive call to r g e t if it isn't there.
  The new third argument to r g e t , next?, will be explained later. For now
- suffice it to say that if it is n i l , r g e t will behave as usual.
+ suffice it to say that if it is nil , r g e t will behave as usual.
      The function lookup and its inverse play the role that gethash did in the
  old r g e t . They use an object's layout to retrieve or set a property with a
  given name. This query duplicates the one we made earlier:
@@ -10173,11 +10173,11 @@ get an error message saying that Lisp has run out of stack space:
  of 1st ifit is either the first element, oramemberof the rest of 1st." Strictly speaking,
  we should also add that "ob j is not a member of 1st if it is empty." Otherwise what
  we're describing is an infinite recursion.
-        In Common Lisp, car and cdr both return n i l if they are given n i l as an
+        In Common Lisp, car and cdr both return nil if they are given nil as an
  argument:
- > (car n i l )
+ > (car nil )
 NIL
- > (cdr n i l )
+ > (cdr nil )
 NIL
 So if we skipped the base case in the definition of member,
  (defun our-member (obj 1 s t )                                                  ; wrong
@@ -10186,11 +10186,11 @@ So if we skipped the base case in the definition of member,
             (our-member obj (cdr 1 s t ) ) ) )
 then it would recurse infinitely if the object we sought wasn't in the list. When we
 reached the end of the list without finding it, the recursive call would be equivalent to:
- (our-member obj n i l )
+ (our-member obj nil )
 In a correct definition (page 16), the base case would stop the recursion at this point,
-returning n i l . But in the mistaken definition, the function dutifully finds the car of
-n i l , which is n i l , and compares that to the object we're looking for. Unless that
-happens to be n i l , the function then continues looking in the cdr of n i l , which is
+returning nil . But in the mistaken definition, the function dutifully finds the car of
+nil , which is nil , and compares that to the object we're looking for. Unless that
+happens to be nil , the function then continues looking in the cdr of nil , which is
 also nil—and the whole process starts over again.
        If the cause of an infinite loop isn't obvious, you may be able to diagnose it by
 looking at a trace or backtrace. Infinite loops fall into two categories. The easy ones
@@ -10250,9 +10250,9 @@ Error: DEFUN has no value.
  don't give a second argument to def var, your global variable will be declared but not
  initialized; that may be the root of the problem.
  Unexpected Nils
- When functions complain about being passed n i l as an argument, it is usually a sign
+ When functions complain about being passed nil as an argument, it is usually a sign
  that something went wrong earlier in the program. Several built-in operators return
- n i l to indicate failure. But since n i l is also a legitimate Lisp object, problems may
+ nil to indicate failure. But since nil is also a legitimate Lisp object, problems may
  not arise till later, when some other part of your program tries to put this supposed
  return value to use.
        For example, this function to return the number of days in a month has a bug in
@@ -10268,7 +10268,7 @@ then the following can happen:
 > (month-weeks ' o c t )
 E r r o r : NIL i s not a v a l i d argument t o / .
 The problem arises because none of the case clauses in month-length applies.
-When this happens, case returns n i l . Then month-weeks, which thinks it is getting
+When this happens, case returns nil . Then month-weeks, which thinks it is getting
 a number, passes this value on to /, which complains.
       Here at least the bug and its manifestation occur close together. Such bugs are
 harder to find when they are far apart. To avoid this possibility, some dialects of Lisp
@@ -10312,7 +10312,7 @@ ABCD
 4
 then : s t a r t and 2 will be the values of the first two optional parameters. If we want
 read to start after the second character, we should say instead:
-> (read-from-string "abed" n i l n i l -.start 2)
+> (read-from-string "abed" nil nil -.start 2)
 CD
 4
  294                                      APPENDIX A
@@ -10526,7 +10526,7 @@ this way, each macro definition would have to appear before any code that calls 
 300                                      APPENDIX B
 (defun -nreverse (seq)
    (labels ((nrl (1st)
-                    (let ((prev n i l ) )
+                    (let ((prev nil ) )
                       (do ()
                            ((null 1st) prev)
                          (psetf (cdr 1st) prev
@@ -10859,7 +10859,7 @@ Changes Since 1990
     Thus an argument to row-major-aref can always be declared a fixnum.
 13. Instead of a : p r i n t -function, a structure defined with def s t r u c t can now
     have a -.print-object, which takes only the first two arguments.
-14. There is a new type, boolean, whose two members are n i l and t.
+14. There is a new type, boolean, whose two members are nil and t.
  D: Language Reference
 This appendix describes every operator in ANSI Common Lisp. The descriptions
 follow several conventions:
@@ -10900,7 +10900,7 @@ appears, unless the description explicitly says otherwise.
  declaration    must be a list whose car is declare.
  environment     indicates an object representing a lexical environment. (You can't
                 create such objects directly, but Lisp uses them internally.) The
-                 symbol n i l always represents the global environment,
+                 symbol nil always represents the global environment,
 f                must be a float.
 fname            must be a function name: either a symbol or a list ( s e t f s), where
                 s is a symbol.
@@ -10922,7 +10922,7 @@ path            can be a pathname, a stream associated with a file (in which cas
 place           must be an expression that could be the first argument to setf.
 plist           must be a property list, which is a proper list with an even number
                 of elements.
-pprint-dispatch must be a pprint dispatch table (or possibly n i l ) .
+pprint-dispatch must be a pprint dispatch table (or possibly nil ) .
 predicate       must be a function,
 prolist         must be a proper list.
 proseq          must be a proper sequence—that is, a vector or a proper list,
@@ -10962,13 +10962,13 @@ Evaluation and Compilation
        should not differ from the global environment except by having local macro
        or symbol-macro definitions, or declarations.) If function (which may be
        a function or lambda expression) is provided, then coerces it to a function,
-       compiles it, and names it fname, Tttummg fname. The fname may also be n i l ,
+       compiles it, and names it fname, Tttummg fname. The fname may also be nil ,
        in which case the compiled function is returned. Returns two additional values:
        a second true iff compilation generated errors or warnings; and a third true iff
        compilation generated errors or warnings other than style warnings.
  (compiler-macro-function fname ftoptional environment)                                  Function
        Returns the compiler macro function whose name is fname in environment,
-       or n i l if there isn't one. A compiler macro function is a function of two
+       or nil if there isn't one. A compiler macro function is a function of two
        arguments: the entire call, and the environment in which it occurs. Settable.
  (constantp expression ftoptional environment)                                           Function
        Returns true if expression is the name of a constant, or a list whose car is
@@ -11012,7 +11012,7 @@ Evaluation and Compilation
            Evaluates expression in the global environment and returns its value(s).
 (eval-when (case*) expression*)                                                      Special Operator
            If one of the cases applies, the expressions are evaluated in order and the value(s)
-           of the last are returned; otherwise returns n i l . The case : compile-toplevel
+           of the last are returned; otherwise returns nil . The case : compile-toplevel
            applies when the eval-when expression is a top-level form in a file being com-
            piled. The case : l o a d - t o p l e v e l applies when the eval-when expression
            is a top-level form in a compiled file being loaded. The case : execute
@@ -11044,7 +11044,7 @@ Evaluation and Compilation
           true iff the return value differs from expression.
                                              TYPES AND CLASSES                                     315
  (macro-function symbol ftoptional environment)                                            Function
-           Returns the macro function whose name is fname in environment, or n i l if
+           Returns the macro function whose name is fname in environment, or nil if
            there isn't one. A macro function is a function of two arguments: the entire
            call, and the environment in which it occurs. Settable.
  (proclaim declaration-spec)                                                              Function
@@ -11061,7 +11061,7 @@ Evaluation and Compilation
            Returns the value(s) of expression, and declares that the value(s) will be of type
            type. (See the values type specifier, page 398.) The number of declarations
            and the number of values can differ: leftover declarations have to be true of
-           n i l ; leftover values have no type declared for them.
+           nil ; leftover values have no type declared for them.
 (quote object)                                                                  Special Operator
           Returns its argument without evaluating it.
 Types and Classes
@@ -11096,8 +11096,8 @@ Types and Classes
            Returns true iff object is of type type.
 Control and Data Flow
 (and expression*)                                                                          Macro
-           Evaluates the expressions in order, returning n i l immediately if one evaluates
-           to n i l , or if they all return true, the value(s) of the last. Returns t if given no
+           Evaluates the expressions in order, returning nil immediately if one evaluates
+           to nil , or if they all return true, the value(s) of the last. Returns t if given no
            arguments.
 (apply function ftrest args)                                                             Function
            Calls function on args, of which there must be at least one. The last org must
@@ -11113,7 +11113,7 @@ Control and Data Flow
           Evaluates object, then looks at the remaining clauses in order; if the object is
            eql to or a member of the key (not evaluated) of some clause, or the clause
           begins with t or otherwise, then evaluates the following expressions and
-          returns the value(s) of the last. Returns n i l if no key matches, or the matching
+          returns the value(s) of the last. Returns nil if no key matches, or the matching
           key has no expressions. The symbols t and otherwise may not appear as
           keys, but you can get the same effect by using ( t ) and (otherwise).
 (catch tag expression*)                                                         Special Operator
@@ -11122,7 +11122,7 @@ Control and Data Flow
 (cease object (key expression*)*)                                                          Macro
           Evaluates object, then looks at the remaining clauses in order; if the object is
           eql to or a member of the key (not evaluated) of some clause, then evaluates
-          the following expressions and returns the value(s) of the last. Returns n i l if
+          the following expressions and returns the value(s) of the last. Returns nil if
           the matching key has no expressions. If no key matches, signals a correctable
           type-error. The symbols t and otherwise may not appear as keys, but you
           can get the same effect by using ( t ) and (otherwise).
@@ -11136,13 +11136,13 @@ Control and Data Flow
  (cond ((test expression*)*))                                                           Macro
        Evaluates tests until one returns true. If that test has no corresponding ex-
        pressions, returns the value of the test. Otherwise evaluates the expressions in
-       order, returning the value(s) of the last. If no test returns true, returns n i l .
+       order, returning the value(s) of the last. If no test returns true, returns nil .
 (constantly object)                                                                  Function
        Returns a function that takes any number of arguments and returns object.
 (ctypecase object (type expression*)*)                                                  Macro
        Evaluates object, then looks at the remaining clauses in order; if the object is of
        some type (not evaluated), then evaluates the following expressions and returns
-       the value(s) of the last. Returns n i l if the matching type has no expressions.
+       the value(s) of the last. Returns nil if the matching type has no expressions.
        If no type matches, signals a correctable type-error.
 (def const ant symbol expression [string])                                              Macro
        Defines symbol to be a global constant with the value of expression. No local
@@ -11220,7 +11220,7 @@ Control and Data Flow
            If the shortest proseq has length n, returns true iff predicate, which must be a
            function of as many arguments as there are proseqs, returns true when applied
            to all the first elements, then all the second elements, . . . then all the nth
-           elements. Stops as soon as predicate returns n i l , returning n i l .
+           elements. Stops as soon as predicate returns nil , returning nil .
 (fboundp fname)                                                                      Function
            Returns true iff fname is the name of a global function or macro.
 ( f d e f i n i t i o n fname)                                                       Function
@@ -11242,7 +11242,7 @@ Control and Data Flow
           implementation-dependent whether or not there is a function called ( s e t f / ) .
 (function-lambda-expression function)                                                Function
           Intended to return the lambda expression defining function, but can always
-          return n i l . Returns two additional values: the second, if n i l , says that
+          return nil . Returns two additional values: the second, if nil , says that
          function is defined in the null lexical environment; an implementation can use
           the third to express function's name.
 (functionp object)                                                                   Function
@@ -11269,11 +11269,11 @@ Control and Data Flow
  ( i f test then [else])                                                        Special Operator
             Evaluates the test expression; if it returns true, evaluates and returns the value(s)
             of the then expression; otherwise evaluates and returns the value(s) of the else
-            expression, or n i l if there is no else expression.
+            expression, or nil if there is no else expression.
  ( l e t {{symbol \ {symbol [value])}*)                                        Special Operator
             declaration* expression*)
             Evaluates its body with each symbol bound to the value of the corresponding
-            value expression, or n i l if no value is given.
+            value expression, or nil if no value is given.
  ( l e t * ({symbol \ (.symbol [value])}*)                                     Special Operator
               declaration * expression *)
             Like l e t , except that value expressions may refer to previous symbols.
@@ -11287,7 +11287,7 @@ Control and Data Flow
                                          declaration * expression *)
             Evaluates expressionl, then evaluates its body with each of the symbols (not
             evaluated) bound to the corresponding return value. If there are too few return
-            values, the leftover variables are bound to n i l ; if there are too many, the extra
+            values, the leftover variables are bound to nil ; if there are too many, the extra
             values are ignored.
 ( m u l t i p l e - v a l u e - c a l l function expression*)                  Special Operator
             Calls function (evaluated) with arguments consisting of all the values returned
@@ -11299,10 +11299,10 @@ Control and Data Flow
            Evaluates its arguments in order, returning the value(s) of the first.
  ( m u l t i p l e - v a l u e - s e t q (symbol*) expression)                          Macro
            Assigns the symbols (not evaluated) the values returned by expression. If there
-           are too few return values, the leftover variables are bound to n i l ; if there are
+           are too few return values, the leftover variables are bound to nil ; if there are
           too many, the extra values are ignored.
  (not object)                                                                        Function
-          Returns true when object is n i l .
+          Returns true when object is nil .
  (notany predicate proseq ftrest proseqs)                                            Function
           An expression of the form (notany predicate s\ .. .sn) is equivalent to (not
            (some predicate s\ .. .sn)).
@@ -11311,16 +11311,16 @@ Control and Data Flow
            (not (every predicate s\ .. .sn)).
  (nth-value n expression)                                                              Macro
           Returns the nth (evaluated) value returned by expression. Numbering starts at
-          0. Returns n i l if expression returns less than n+\ values.
+          0. Returns nil if expression returns less than n+\ values.
 (or expression*)                                                                       Macro
           Evaluates the expressions in order; as soon as one returns true, returns its value.
           Can return multiple values from the last expression, but only the last. Returns
-          n i l if no expression returns true.
+          nil if no expression returns true.
 (prog ({symbol | (symbol [value])}*)                                                   Macro
             declaration* {tag | expression}*)
           Evaluates its body with each symbol bound to the value of the corresponding
-          value expression, or n i l if no value is given. The body is enclosed in an
-          implicit tagbody and an implicit block named n i l , so the expressions can
+          value expression, or nil if no value is given. The body is enclosed in an
+          implicit tagbody and an implicit block named nil , so the expressions can
           include calls to go, r e t u r n , and r e t u r n - f rom.
 (prog* ({symbol | (symbol [value])}*)                                                  Macro
              declaration* {tag \ expression}*)
@@ -11347,8 +11347,8 @@ Control and Data Flow
              preceding symbols, it will get the previous value. That is, (psetq x y y x)
              would exchange the values of x and y.
  ( r e t u r n expression)                                                                   Macro
-             Equivalent to ( r e t u r n - f rom n i l expression). Many macros (e.g. do) im-
-             plicitly enclose their bodies in blocks named n i l .
+             Equivalent to ( r e t u r n - f rom nil expression). Many macros (e.g. do) im-
+             plicitly enclose their bodies in blocks named nil .
  ( r e t u r n - f rom symbol expression)                                        Special Operator
             Returns the value(s) of expression from the nearest lexically enclosing block
             whose name is symbol (not evaluated). Causes an error if the r e t u r n - f rom
@@ -11358,7 +11358,7 @@ Control and Data Flow
             Evaluates all its arguments in order; then, if the call was of the form ( r o t a t e f
             a\ .. .a n ) puts the value of ai in the place referred to by a\, the value of a-$ in
             the place referred to by #2, • • • and the value of a\ in the place referred to by
-            an. Returns n i l .
+            an. Returns nil .
 ( s e t f {place value}*)                                                                    Macro
             A generalization of setq: stores in the location associated with each place the
             value of the corresponding value expression. If a value expression refers to
@@ -11387,7 +11387,7 @@ Control and Data Flow
            to all the first elements, or all the second elements,... or all the nth elements.
            Stops as soon as predicate returns true, returning that value.
 (tagbody {tag \ expression]*)                                               Special Operator
-          Evaluates the expressions in order and returns n i l . May contain calls to go,
+          Evaluates the expressions in order and returns nil . May contain calls to go,
           in which case the order in which expressions are evaluated (if at all) may be
           altered. The tags, which must be symbols or integers, are not evaluated. Atoms
           yielded by macro expansions are not treated as tags. All macros whose names
@@ -11400,7 +11400,7 @@ Control and Data Flow
           Evaluates object, then looks at the remaining clauses in order; if the object is
           of some type (not evaluated), or the clause begins with t or otherwise, then
           evaluates the following expressions and returns the value(s) of the last. Returns
-          n i l if no type matches, or the matching type has no expressions.
+          nil if no type matches, or the matching type has no expressions.
 (unless test expression*)                                                              Macro
           An expression of the form (unless test e\ .. .en) is equivalent to (when
            (not test) e\ .. .en).
@@ -11413,7 +11413,7 @@ Control and Data Flow
           Returns the elements of prolist.
 (when test expression*)                                                                Macro
          Evaluates the test expression; if it returns true, evaluates the expressions in
-          order and returns the value(s) of the last; otherwise returns n i l . Returns n i l
+          order and returns the value(s) of the last; otherwise returns nil . Returns nil
          if there are no expressions.
  324                                           APPENDIX D
 Iteration
@@ -11421,13 +11421,13 @@ Iteration
          (test result*)
         declaration* {tag \ expression}*)
            Evaluates its body first with each var bound to the value of the corresponding
-           init expression (or n i l if there isn't one), and on each successive iteration set
+           init expression (or nil if there isn't one), and on each successive iteration set
            to the value of the corresponding update expression (or the previous value, if
            there isn't one). Each time the body is about to be evaluated, the test expression
            is evaluated; if it returns false, the body is evaluated, but if it returns true, the
            result expressions are evaluated in order and the value of the last is returned.
            The body is enclosed in an implicit tagbody, and the whole do expression in
-           an implicit block named n i l .
+           an implicit block named nil .
            If an init expression refers to a variable with the name of a var, it will refer
            to the variable with that name in the context where the do expression occurs.
            If an update expression refers to a var, it will get the value from the previous
@@ -11441,21 +11441,21 @@ Iteration
 ( d o l i s t (var list [result])                                                        Macro
                declaration* {tag | expression}*)
           Evaluates its body with var bound to successive elements of the value of list.
-          If the value of list is n i l , the body is never evaluated. The body is enclosed in
+          If the value of list is nil , the body is never evaluated. The body is enclosed in
           an implicit tagbody, and the whole d o l i s t expression in an implicit block
-          named n i l . Returns the value(s) of the result expression, or n i l if there isn't
-          one. The result expression may refer to var, which will be n i l .
+          named nil . Returns the value(s) of the result expression, or nil if there isn't
+          one. The result expression may refer to var, which will be nil .
 (dotimes (var integer [result])                                                          Macro
                 declaration* {tag | expression}*)
           Evaluates its body with var bound to successive integers from 0 to the value of
           integer minus 1, inclusive. If the value of integer is not positive, the body is
           never evaluated. The body is enclosed in an implicit tagbody, and the whole
-          dotimes expression in an implicit block named n i l . Returns the value(s) of
-          the result expression, or n i l if there isn't one. The result expression may refer
+          dotimes expression in an implicit block named nil . Returns the value(s) of
+          the result expression, or nil if there isn't one. The result expression may refer
           to var, which will be the number of times the body was evaluated.
 (loop expression*)                                                                       Macro
           Short form: If the expressions do not include loop keywords, evaluates them in
-          order, forever. The expressions are enclosed in an implicit block named n i l .
+          order, forever. The expressions are enclosed in an implicit block named nil .
                                           ITERATION                                      325
 (loop [name-clause] var-clause* body-clause*)                                         Macro
       Long form: The evaluation of a loop expression containing loop keywords
@@ -11472,9 +11472,9 @@ Iteration
      Individual clauses can contribute code to several different steps. Within steps,
      expressions are evaluated in the order in which they appear in the source code.
      A loop expression is always enclosed in an implicit block. By default its
-     name is n i l , but one may be given explicitly in a named clause.
+     name is nil , but one may be given explicitly in a named clause.
      The value returned by a loop expression is the (textually) last accumulated
-     value, or n i l if there are none. An accumulated value is the value con-
+     value, or nil if there are none. An accumulated value is the value con-
      structed on successive iterations by a c o l l e c t , append, nconc, count, sum,
      maximize, minimize, always, never, or t h e r e i s clause.
      A name-clause is a named clause. A var-clause can be a with, i n i t i a l l y ,
@@ -11555,7 +11555,7 @@ r e t u r n expression
           Causes the loop expression to return the value of expression immediately,
           without evaluating the epilogue.
 {collect | append | nconc} expression [into var]
-          Accumulates a list, initially n i l , during iteration. If the keyword is
+          Accumulates a list, initially nil , during iteration. If the keyword is
           c o l l e c t , the list will be a list of all the values returned by expression; if
           append, the values it returned appended together; if nconc, the values
          it returned nconced together. If a var is provided, it will be bound to the
@@ -11597,13 +11597,13 @@ when test then-clause 1 {and then-clause}*
            u n t i l expression
                      Equivalent to while (not expression).
            always expression
-                     Like while, but also provides a return value for the loop: n i l if the
+                     Like while, but also provides a return value for the loop: nil if the
                      expression returned false, t otherwise.
            never expression
                      Equivalent to always (not expression).
            t h e r e i s expression
                      Like u n t i l , but also provides a return value for the loop: the value of
-                     expression if it returned true, n i l otherwise.
+                     expression if it returned true, nil otherwise.
 (loop-finish)                                                                             Macro
            Can only be used within a loop expression, where it ends iteration and transfers
            control to the loop epilogue, after which the loop returns normally.
@@ -11812,8 +11812,8 @@ Objects
           existing methods are not changed.
 ( f i n d - c l a s s symbol ftoptional error environment)                                 Function
           Returns the class whose name is symbol in environment. If there isn't one,
-          generates an error if e r r o r is true (the default), otherwise returns n i l . Settable;
-          to detach a name from a class, set its f i n d - c l a s s to n i l .
+          generates an error if e r r o r is true (the default), otherwise returns nil . Settable;
+          to detach a name from a class, set its f i n d - c l a s s to nil .
 (find-method generic-function qualifiers specializes                            Generic Function
                        ftoptional error)
           Returns the method of generic-function whose qualifiers match qualifiers and
@@ -11864,7 +11864,7 @@ Objects
            next method. The built-in primary method signals an error.
 ( r e i n i t i a l i z e - i n s t a n c e instance &rest initargs)               Generic Function
            Sets the slots of instance as specified by initargs. The built-in primary method
-           passes the arguments on to s h a r e d - i n i t i a l i z e (with n i l as the second
+           passes the arguments on to s h a r e d - i n i t i a l i z e (with nil as the second
            argument). Allows other keys.
                                                   OBJECTS                                      335
  (remove-method {generic-function) method)                                        Generic Function
@@ -11941,12 +11941,12 @@ Structures
           A property may have any of the following forms:
            :cone-name | (:cone-name [name])
                    The function for referring to a field named f in a structure named s t r
-                   will be name! instead of the default s t r - f . If name is n i l or is not
+                   will be name! instead of the default s t r - f . If name is nil or is not
                    provided, then the function will be just f.
                                            STRUCTURES                              337
  : constructor | (: c o n s t r u c t o r [name [parameters]])
           If a non-nil name is given, the function for making new structures will
-          be called name. If name is n i l no such function will be defined. If no
+          be called name. If name is nil no such function will be defined. If no
           name is given, the default name (make-str) will be used. If parameters
           is given it must be a list of field names; it becomes the parameter list of
           the constructor function, and each field of a new structure will be set to
@@ -11954,7 +11954,7 @@ Structures
           defined for a single structure.
 : copier | (: copier [name])
           If a non-nil name is given, the function for copying structures will be
-          called name. If name is n i l no such function will be defined. If no name
+          called name. If name is nil no such function will be defined. If no name
           is given, the default name (copy-str) will be used.
 (: include name field*)
           Means that s t r s will also include all the fields of the existing structure
@@ -11974,7 +11974,7 @@ Structures
          only with :type.
 : p r e d i c a t e | ( : p r e d i c a t e [name])
          If a non-nil name is given, the predicate for identifying structures will
-         be called name. If name is n i l no such function will be defined. If no
+         be called name. If name is nil no such function will be defined. If no
          name is given, the default name ( s t r - p ) will be used. Cannot be used
          with : type, unless : named is also specified.
 (: p r i n t - f u n c t i o n [/name])
@@ -12013,10 +12013,10 @@ Conditions
 (abort ftoptional condition)                                                                         Function
             Invokes the restart returned by ( f i n d - r e s t a r t          ' abort condition).
 (assert test [(place*) [cond arg*]])                                                                    Macro
-            Evaluates test. If it returns n i l , signals the correctable error denoted by the
+            Evaluates test. If it returns nil , signals the correctable error denoted by the
             values of cond and args. The places should be those on which the value of the
             test depends; continuing from the error will allow the user to assign new values
-            to them. Returns n i l if it returns at all.
+            to them. Returns nil if it returns at all.
 (break &rest args)                                                                                   Function
             Calls format on args, then invokes the debugger. Does not signal a condition.
 ( c e l l - e r r o r - n a m e condition)                                                           Function
@@ -12024,7 +12024,7 @@ Conditions
                                               CONDITIONS                                        339
  (cerror format cond ftrest args)                                                          Function
            Like error, except that is possible to continue from the signalled error, re-
-           turning n i l . The format is given to format when the option to continue is
+           turning nil . The format is given to format when the option to continue is
            displayed.
  (check-type place type [string])                                                            Macro
            Signals a correctable type-error if the value of place is not of type type. The
@@ -12036,7 +12036,7 @@ Conditions
            list must not be modified.
 (continue &optional condition)                                                             Function
            Invokes the restart returned by ( f i n d - r e s t a r t ' a b o r t condition) if there
-           is one, otherwise returns n i l .
+           is one, otherwise returns nil .
 (define-condition name (parent*) (slot-spec*) class-spec*)                                   Macro
            Defines a new condition type, returning its name. Has the same syntax and be-
            havior as def c l a s s , except that the class-specs may not include a : metaclass
@@ -12050,7 +12050,7 @@ Conditions
 ( f i n d - r e s t a r t r feoptional condition)                                         Function
           Returns the most recent pending restart whose name is r, if r is a symbol, or
           which is eq to r, if r is a restart. If condition is supplied, only restarts associated
-          with that condition, or with no condition, are considered. Returns n i l if the
+          with that condition, or with no condition, are considered. Returns nil if the
           specified restart isn't found.
 (handler-bind ((type handler)*) expression*)                                                 Macro
           Evaluates the expressions with local handlers. If a condition is signalled, it
@@ -12074,7 +12074,7 @@ Conditions
  ( i g n o r e - e r r o r s expression*)                                                      Macro
             Like progn, except that the expressions are evaluated with a local handler for
             errors. This handler will cause the i g n o r e - e r r o r s expression to return two
-            values: n i l , and the condition that was signalled.
+            values: nil , and the condition that was signalled.
  (invalid-method-error method format ftrest args)                                           Function
             Used to signal an error when there is an applicable method with invalid quali-
             fiers. The format and args are passed to format to display the error message.
@@ -12098,7 +12098,7 @@ Conditions
 ( r e s t a r t - b i n d ((symbol function {key val}*)*) expression*)                        Macro
            Evaluates the expressions with new restarts pending. Each symbol becomes
            the name of a restart whose restart function is the value of the corresponding
-          function. (If symbol is n i l the restart will be anonymous.) A key can be:
+          function. (If symbol is nil the restart will be anonymous.) A key can be:
                                                    CONDITIONS                                   341
             :interactive-function
                   The corresponding val must evaluate to a function of no arguments that
@@ -12115,7 +12115,7 @@ Conditions
                                                 declaration* expression*)*)
           Evaluates test with new restarts pending. Each symbol becomes the name of
            a restart whose restart function is (lambda parameters declaration* expres-
-          sion*). (If symbol is n i l the restart will be anonymous.) A key can be:
+          sion*). (If symbol is nil the restart will be anonymous.) A key can be:
            :interactive
                   The corresponding val must be a symbol or lambda expression denot-
                   ing a function of no arguments that constructs a list of arguments for
@@ -12130,7 +12130,7 @@ Conditions
                  is applicable under that condition. By default the restart is applicable
                  under any condition.
 ( r e s t art-name restart)                                                               Function
-          Returns the name of restart or n i l if it is anonymous.
+          Returns the name of restart or nil if it is anonymous.
 (signal cond ftrest args)                                                                 Function
           Signals the condition denoted by cond and args. If it is not handled, returns
           nil.
@@ -12141,20 +12141,20 @@ Conditions
  342                                                APPENDIX D
  ( s t o r e - v a l u e object ftoptional condition)                                           Function
             Invokes the restart returned by ( f i n d - r e s t a r t ' s t o r e - v a l u e condition),
-            if there is one, on object. Otherwise returns n i l .
+            if there is one, on object. Otherwise returns nil .
  (use-value object ftoptional condition)                                                        Function
             Invokes the restart returned by ( f i n d - r e s t a r t      'use-value condition), if
-            there is one, on object. Otherwise returns n i l .
+            there is one, on object. Otherwise returns nil .
  (warn cond ftrest args)                                                                        Function
             Signals the simple-warning denoted by cond and args. If it is not handled,
-            prints a warning to *error-output* and returns n i l .
+            prints a warning to *error-output* and returns nil .
  ( w i t h - c o n d i t i o n - r e s t a r t s condition restarts expression*)                  Macro
             First condition is evaluated to produce a condition and restarts to produce a list
             of restarts. Then the expressions, are evaluated with all the restarts associated
             with the condition.
  ( w i t h - s i m p l e - r e s t a r t {symbol format arg*) expression*)                        Macro
             Evaluates the expressions with a new restart named symbol which, if invoked,
-            causes the w i t h - s i m p l e - r e s t a r t expression to return two values: n i l and
+            causes the w i t h - s i m p l e - r e s t a r t expression to return two values: nil and
             t. The format and args are passed to format when the restart is described.
 Symbols
 (boundp symbol)                                                                                 Function
@@ -12253,9 +12253,9 @@ Packages
       Evaluates its body with var bound to successive symbols accessible in package.
       Symbols inherited from different packages may be encountered multiple times.
       The body is enclosed in an implicit tagbody, and the whole do-symbols
-      expression in an implicit block named n i l . Returns the value(s) of the result
-      expression, or n i l if there isn't one. The result expression may refer to var,
-      which will be n i l .
+      expression in an implicit block named nil . Returns the value(s) of the result
+      expression, or nil if there isn't one. The result expression may refer to var,
+      which will be nil .
                                                    PACKAGES                                                     345
  (export symbols ^optional package)                                                                        Function
             Makes each of the symbols (which must be either a symbol accessible in
@@ -12264,11 +12264,11 @@ Packages
             Returns a list of every symbol in an active package whose name is name (if it
            is a string) or the name of name (if it is a symbol).
  (find-package package)                                                                                    Function
-           Returns the package denoted by package, or n i l if there isn't one.
+           Returns the package denoted by package, or nil if there isn't one.
  (find-symbol string ^optional package)                                                                    Function
            Returns the symbol accessible in package whose name is string, plus a sec-
            ond value indicating that the symbol is either : i n t e r n a l , : e x t e r n a l , or
-            : i n h e r i t e d . If there is no symbol named string, both return values are n i l .
+            : i n h e r i t e d . If there is no symbol named string, both return values are nil .
  (import symbols ^ o p t i o n a l package)                                                                Function
            Makes each of the symbols (which must be either a symbol or a list of symbols)
            accessible in package. Symbols that have no home package get package as
@@ -12279,7 +12279,7 @@ Packages
 ( i n t e r n string ftoptional package)                                                                  Function
            Returns the symbol accessible in package whose name is s t r i n g = to string,
            creating one if necessary. Returns a second value indicating the accessibility of
-           the symbol; it can be : i n t e r n a l , : e x t e r n a l , : i n h e r i t e d , or n i l , indicating
+           the symbol; it can be : i n t e r n a l , : e x t e r n a l , : i n h e r i t e d , or nil , indicating
            that the symbol was newly created.
 (list-all-packages)                                                                                       Function
            Returns a new list of every active package.
@@ -12291,7 +12291,7 @@ Packages
 (package-error-package condition)                                                                         Function
           Returns the package involved in the package-error condition.
 (package-name package)                                                                                    Function
-          Returns the string that is the name of package, or n i l if it is not active.
+          Returns the string that is the name of package, or nil if it is not active.
 (package-nicknames package)                                                                               Function
           Returns a list of the strings that are nicknames of package.
 (packagep object)                                                                                         Function
@@ -12337,7 +12337,7 @@ Packages
          to a package, or a string or symbol denoting one, or a list thereof). The keys
          indicate the symbols considered, and can include : i n t e r n a l , : external,
          and : i n h e r i t e d . The local macro returns four values: a value that is true
-         iff a symbol is returned (so n i l indicates the stream has run dry); the sym-
+         iff a symbol is returned (so nil indicates the stream has run dry); the sym-
          bol; a keyword indicating whether the symbol is : i n t e r n a l , : external, or
           : i n h e r i t e d ; and the package from which the symbol was obtained. The local
          macro may return symbols in any order, and may return the same symbol more
@@ -12532,7 +12532,7 @@ Numbers
            representations of its arguments, or 0 if no arguments are given.
 (make-random-state ftoptional state)                                              Function
            Returns a new random state. If state is a random state, returns a copy of it; if
-           n i l , a copy of *random-state*; if t, a randomly-initialized random state.
+           nil , a copy of *random-state*; if t, a randomly-initialized random state.
 (mask-field spec i)                                                               Function
            Returns the integer whose representation has the same bits as / in the region
            specified by the byte specifier spec, and 0 elsewhere.
@@ -12559,7 +12559,7 @@ Numbers
             followed by zero or more whitespace characters. (That is, read-macros are not
             allowed.) If junk-allowed is false (the default), it will cause an error if the
             string is in any other format; if it is true, p a r s e - i n t e g e r will simply return
-            n i l if it does not encounter a legal integer.
+            nil if it does not encounter a legal integer.
  (phase n)                                                                                   Function
             Returns the angle of n when it is represented in polar coordinates.
  (plusp r)                                                                                   Function
@@ -12670,7 +12670,7 @@ Characters
           Like char< but ignores case.
                                                CHARACTERS                                  355
  (char-name char)                                                                     Function
-            Returns the string that is the name of char, or n i l if it doesn't have one.
+            Returns the string that is the name of char, or nil if it doesn't have one.
  ( c h a r - n o t - g r e a t e r p charl fcrest chars)                              Function
             Like char<= but ignores case.
  (char-not-equal charl &rest chars)                                                   Function
@@ -12719,7 +12719,7 @@ Characters
  (append ferest prolists)                                                                     Function
             Returns a list whose elements are the elements of each prolist, in order. The last
             argument, which can be of any type, is not copied, so (cdr (append ' (a)
-            x)) will be eq to x. Returns n i l if given no arguments.
+            x)) will be eq to x. Returns nil if given no arguments.
  (assoc key alist fekey key test test-not)                                                    Function
             Returns the first element in alist whose car matches key.
  ( a s s o c - i f predicate alist fekey key)                                                 Function
@@ -12730,12 +12730,12 @@ Characters
            Returns true when object is not a cons.
  ( b u t l a s t list feoptional (n 1))                                                      Function
 ( n b u t l a s t (list) feoptional (n 1))                                                   Function
-           Returns a copy of list without the last n elements, or n i l if list has less than n
+           Returns a copy of list without the last n elements, or nil if list has less than n
            elements. Causes an error if n is negative.
 (car list)                                                                                   Function
-           If list is a cons, returns its car. If list is n i l , returns n i l . Settable.
+           If list is a cons, returns its car. If list is nil , returns nil . Settable.
 (cdr list)                                                                                   Function
-           If list is a cons, returns its cdr. If list is n i l , returns n i l . Settable.
+           If list is a cons, returns its cdr. If list is nil , returns nil . Settable.
 (c*r list)                                                                                  Functions
            where x represents a string of one to four as or ds. Equivalent to the corre-
            sponding composition of car and cdr. For example, (cdaar x) is equivalent
@@ -12749,22 +12749,22 @@ Characters
            Same as (mapcar #'(lambda (x) (cons (car x) (cdr x ) ) ) alist).
 ( c o p y - l i s t list)                                                                    Function
            Returns a list equal to list in which all the top-level list structure consists of
-           new conses. If list is n i l , returns n i l .
+           new conses. If list is nil , returns nil .
                                                    CONSES                                       357
  (copy-tree tree)                                                                          Function
             Returns a new tree with the same shape and leaves as tree, but in which all the
              tree structure consists of new conses. If tree is an atom, returns tree.
  (endp list)                                                                               Function
-            Returns true when list is n i l .
+            Returns true when list is nil .
  ( f i r s t list) ... ( t e n t h list)                                                  Functions
-            Return the first through the tenth elements of list, or n i l if list does not have
+            Return the first through the tenth elements of list, or nil if list does not have
             that many elements. Settable.
- (getf plist key ^ o p t i o n a l (default n i l ) )                                      Function
+ (getf plist key ^ o p t i o n a l (default nil ) )                                      Function
             If plist is (pi vi . . . pn vn) and pi is the first p eq to key, returns v*. If no p
             is eq to key, returns default. Settable.
 ( g e t - p r o p e r t i e s plist prolist)                                               Function
             Ifplist is (p\ v\ ... pn Vn) andp, is the first p eq to some element of prolist,
-            returns/?/, vt, and (/?/ v,- . . . p„ v„). Otherwise returns three n i l s .
+            returns/?/, vt, and (/?/ v,- . . . p„ v„). Otherwise returns three nil s .
 ( i n t e r s e c t i o n prolist 1 prolist2 &key key test test-not)                       Function
 ( n i n t e r sect ion {prolist 1) prolist! &key key test test-not)                        Function
             Returns a list of the elements of prolistl that are members of prolistl. Nothing
@@ -12781,12 +12781,12 @@ Characters
             If only one argument is provided, returns it. Otherwise, ( l i s t * arg\ .. .argn)
             is equivalent to (nconc ( l i s t arg\ .. .argn-\) argn).
 ( l i s t - l e n g t h list)                                                              Function
-           Returns the number of conses in list, or n i l if list is circular (in contrast to
+           Returns the number of conses in list, or nil if list is circular (in contrast to
             length, which is not defined for circular lists). It is an error if list is a dotted
             list.
 ( l i s t p object)                                                                        Function
-           Returns true when object is a list—that is, a cons or n i l .
-(make-list n &key (initial-element n i l ) )                                               Function
+           Returns true when object is a list—that is, a cons or nil .
+(make-list n &key (initial-element nil ) )                                               Function
            Returns a new list of n initial-elements.
 (mapc function prolist &rest prolists)                                                     Function
            If the shortest prolist has n elements, calls function h times: first on the first
@@ -12812,24 +12812,24 @@ Characters
            by function.
 (member object prolist &key key test test-not)                                         Function
            Returns the tail of prolist starting with the first element matching object, or
-           n i l if no element matches.
+           nil if no element matches.
 (member-if predicate prolist &key key test test-not)                                   Function
            Returns the tail of prolist starting with the first element for which predicate
-           returns true, or n i l if there is no such element.
+           returns true, or nil if there is no such element.
 (member-if-not predicate prolist &key key test test-not)                             [Function]
            Returns the tail of prolist starting with the first element for which predicate
-           returns false, or n i l if there is no such element.
+           returns false, or nil if there is no such element.
 (nconc &rest (lists))                                                                  Function
            Returns a list whose elements are the elements of each list, in order. Works
            by setting the cdr of the last cons in each list to the succeeding list. The final
-           argument can be an object of any type. Returns n i l if given no arguments.
+           argument can be an object of any type. Returns nil if given no arguments.
 (nth n list)                                                                           Function
-          Returns the (n + l)th element of list. Returns n i l if list has less than (n + 1)
+          Returns the (n + l)th element of list. Returns nil if list has less than (n + 1)
           elements. Settable.
 (nthcdr n list)                                                                        Function
           Equivalent to calling cdr n times in succession with list as the initial argument.
 ( n u l l object)                                                                      Function
-          Returns true when object is n i l .
+          Returns true when object is nil .
 ( p a i r l i s keys values ftoptional alist)                                         Function
           Returns the same value as either (nconc (mapcar # , cons keys values)
           alist) or (nconc (nreverse (mapcar #'cons keys values)) alist),With
@@ -12891,7 +12891,7 @@ Characters
            Returns a tree like tree but with each subtree for which predicate returns false
            replaced by new.
 ( t a i l p object list)                                                                Function
-           Returns true when object is a tail of list—that is, when object is n i l or one of
+           Returns true when object is a tail of list—that is, when object is nil or one of
            the conses that make up list.
 ( t r e e - e q u a l treel tree! &key test test-not)                                  Function
            Returns true when t r e e l and t r e e 2 have the same shape and matching leaves.
@@ -12920,9 +12920,9 @@ Arrays
                      As in make-array, which means that the existing elements of array will
                      be overwritten.
            : f i l l - p o i n t e r object
-                     If object is n i l , the fill pointer (if any) will remain the same.
+                     If object is nil , the fill pointer (if any) will remain the same.
            : d i s p l a c e d - t o array!
-                     If array originally was displaced, but array! is n i l , the corresponding
+                     If array originally was displaced, but array! is nil , the corresponding
                      elements of the old target array will be copied to the array to be returned,
                      with the : i n i t i a l - e l e m e n t (if any) filling in the blanks (if any). If
                      array originally was not displaced, and array! is an array, then the
@@ -12940,7 +12940,7 @@ Arrays
           Returns a list of integers representing the length of each dimension of array.
 (array-displacement array)                                                                      Function
           Returns two values: the array to which array is displaced, and the offset.
-          Returns n i l and 0 if array is not displaced.
+          Returns nil and 0 if array is not displaced.
 (array-element-type array)                                                                      Function
           Returns the element type of array.
 ( a r r a y - h a s - f i l l - p o i n t e r - p array)                                        Function
@@ -12962,7 +12962,7 @@ Arrays
  (bit-and (bit-arrayl) bit-array2 ftoptional (arg))                                      Function
             For bit-arrays what logand is for integers: ands two bit-arrays of the same
             dimensions, returning the resulting array. If arg is t , the returned array is a
-            new one; if n i l , bit-arrayl is used for the return value; if arg is a bit-array (of
+            new one; if nil , bit-arrayl is used for the return value; if arg is a bit-array (of
             the same dimensions as the first two), it is used.
 (bit-andcl (bit-arrayl) bit-array2 ftoptional (arg))                                     Function
             Like b i t - a n d , but analogous to logandcl.
@@ -12978,7 +12978,7 @@ Arrays
             Like bit-and, but analogous to lognor.
 (bit-not (bit-array)ftoptional(arg))                                                     Function
             For bit-arrays what lognot is for integers: returning the logical complement
-            of bit-array. If arg is t , the returned array is a new one; if n i l , bit-array is
+            of bit-array. If arg is t , the returned array is a new one; if nil , bit-array is
             used for the return value; if arg is a bit-array (of the same dimensions as the
             first), it is used.
 ( b i t - o r c l (bit-arrayl) bit-arrayl ^ o p t i o n a l (arg))                      Function
@@ -13049,7 +13049,7 @@ Arrays
             Causes an error if vector doesn't have a fill pointer, or the fill pointer is already
             0.
 (vector-push object vector)                                                             Function
-            If the fill pointer is already equal to the length of vector, simply returns n i l .
+            If the fill pointer is already equal to the length of vector, simply returns nil .
             Otherwise, replaces the element of the vector to which its fill pointer points
             with object, then increments the fill pointer and returns its old value. Causes
            an error if vector doesn't have a fill pointer.
@@ -13161,13 +13161,13 @@ Sequences
  (length proseq)                                                                   Function
             Returns the number of elements in proseq. If proseq has a fill pointer, returns
             the length up to it.
- (make-sequence type n &key {initial-element n i l ) )                             Function
+ (make-sequence type n &key {initial-element nil ) )                             Function
            Returns a new sequence of type type, whose elements are n initial-elements.
  (map type function proseq &rest proseqs)                                          Function
             If the shortest proseq has n elements, calls function n times: first on the first
            element of each proseq, and last on the «th element of each proseq. Returns a
            sequence of type type whose elements are the values returned by function. (If
-           type is n i l , this is like mapc for sequences.)
+           type is nil , this is like mapc for sequences.)
 (map-into {result) function proseq &rest proseqs)                                  Function
            If the shorter of result (which must be a proper sequence) and the shortest
            proseq has n elements, calls function n times: first on the first element of each
@@ -13181,7 +13181,7 @@ Sequences
                      &key key test test-not from-end start 1 endl start! end!)
            Returns the position (zero-indexed) of the first element of sequence 1 at which
            sequencel and sequence! differ. If sequencel and sequence! match in every
-           element, returns n i l . The parameters startl and endl, and start! and end!,
+           element, returns nil . The parameters startl and endl, and start! and end!,
            work like the usual start and end parameters for sequencel and sequence!
            respectively.
 ( p o s i t i o n object proseq                                                    Function
@@ -13245,7 +13245,7 @@ Sequences
  (search sequencel sequencel                                                        Function
                  ftkey key test test-not from-end start1 endl startl endl)
            Returns the position (zero-indexed) of the first subsequence of sequencel that
-           matches sequencel. If no matching subsequence is found, returns n i l . The
+           matches sequencel. If no matching subsequence is found, returns nil . The
            parameters startl and endl, and startl and end!, work like the usual start and
            end parameters for sequencel and sequence! respectively.
  ( s o r t {proseq) predicate ftkey key)                                            Function
@@ -13327,7 +13327,7 @@ Hash Tables
            Evaluates the expressions with symbol defined as a local macro that returns
             information about successive entries in the value of hash-table. The local
            macro usually returns three values: a value that is true iff more values are
-           returned (so n i l indicates the stream has run dry); the key of an entry; and the
+           returned (so nil indicates the stream has run dry); the key of an entry; and the
             object indexed under it.
 Filenames
 (directory-namestring path)                                                         Function
@@ -13356,12 +13356,12 @@ Filenames
                       defaults case)
        Returns a pathname made from its arguments. Unspecified elements are taken
        from defaults', if it is not supplied, the default host is that of • d e f a u l t -
-       pathname-defaults*, and the default for the other components is n i l .
+       pathname-defaults*, and the default for the other components is nil .
        The host can be a string or list of strings that is recognized as a host name. The
        device can be a string. The directory can be a string, a list of strings, or : wild.
        The name and type can be strings or : wild. The version can be a non-negative
        integer, : wild, or : newest; in many implementations it can also be : oldest,
-        : previous, or : i n s t a l l e d . All the preceding arguments can also be n i l , in
+        : previous, or : i n s t a l l e d . All the preceding arguments can also be nil , in
        which case the component may get a default value, or :unspecific, which
        stands for "not applicable," and is not portable.
        The defaults argument can be any valid argument to pathname, and is treated
@@ -13384,7 +13384,7 @@ Filenames
       a string, parses it as a logical pathname, the host of which comes from the
       host argument, or the string itself, or the default pathname, in that order of
       preference. Generates an error if no valid pathname is seen, unless junk-
-      allowed is true, in which case it returns n i l . The start and end are used as
+      allowed is true, in which case it returns nil . The start and end are used as
       in sequence functions. Returns as a second value the index at which parsing
       stopped.
 (pathname path)                                                                   Function
@@ -13421,7 +13421,7 @@ Filenames
 (wild-pathname-p path &optional component)                                        Function
            Returns true iff the component of path designated by component (which can
            be :host, : device, : d i r e c t o r y , :name, :type, or : version) is wild, or,
-           if component is n i l , if path has any wild components.
+           if component is nil , if path has any wild components.
 Files
 ( d e l e t e - f i l e path)                                                     Function
            Deletes the file denoted by path. Returns t.
@@ -13434,15 +13434,15 @@ Files
           path, and a second value true iff any directories were created.
 374                                               APPENDIX D
  ( f i l e - a u t h o r path)                                                                 Function
-             Returns a string representing the author of the file denoted by path, or n i l if it
+             Returns a string representing the author of the file denoted by path, or nil if it
              can't be determined.
  ( f i l e - e r r o r - p a t h n a m e condition)                                            Function
              Returns the pathname in the file-error condition.
  ( f i l e - w r i t e - d a t e path)                                                         Function
              Returns the time, in the same format as g e t - u n i v e r s a l - t i m e , at which the
-             file denoted by path was last written, or n i l if it can't be determined.
+             file denoted by path was last written, or nil if it can't be determined.
 ( p r o b e - f i l e path)                                                                    Function
-             Returns the actual name of the file denoted by path, or n i l if this file does not
+             Returns the actual name of the file denoted by path, or nil if this file does not
              exist.
 (rename-file pathl pathl)                                                                      Function
              Renames the file denotes by pathl with the name corresponding to pathl
@@ -13456,9 +13456,9 @@ Streams
 (broadcast-stream-streams broadcast-stream)                                                   Function
             Returns a list of the streams that compose broadcast-stream.
 ( c l e a r - i n p u t ftoptional stream)                                                    Function
-            Clears any input waiting in stream, returning n i l .
+            Clears any input waiting in stream, returning nil .
 ( c l e a r - o u t p u t ftoptional stream)                                                  Function
-            Discards any buffered output on stream, returning n i l .
+            Discards any buffered output on stream, returning nil .
 (close stream &key abort)                                                                     Function
             Closes stream, returning t if the stream had been open. If abort is true, tries
             to remove any sign of the stream having existed—that is, an associated output
@@ -13473,16 +13473,16 @@ Streams
             Returns the output stream of echo-stream.
                                                       STREAMS                                           375
  ( f i l e - l e n g t h stream)                                                                Function
-             Returns the number of elements in stream, or n i l if it cannot be determined.
+             Returns the number of elements in stream, or nil if it cannot be determined.
 ( f i l e - p o s i t i o n stream ftoptional pos)                                             Function
-             If no pos is given, returns the current position in in stream, or n i l if it cannot
+             If no pos is given, returns the current position in in stream, or nil if it cannot
              be determined. If pos is given, it can be : s t a r t , :end, or a non-negative
              integer, and the position in stream is set accordingly
 ( f i l e - s t r i n g - l e n g t h stream object)                                           Function
              Returns the difference between the current position in stream and what it would
-            be if object were written to it; or n i l if this cannot be determined.
+            be if object were written to it; or nil if this cannot be determined.
 ( f i n i s h - o u t p u t ^optional stream)                                                  Function
-            Forces out any buffered output on stream, then returns n i l .
+            Forces out any buffered output on stream, then returns nil .
 (force-output feoptional stream)                                                               Function
             Like f i n i s h - o u t p u t , but does not wait till the I/O operation is completed
             before returning.
@@ -13522,7 +13522,7 @@ Streams
      output to output-stream.
 (open path &key direction element-type if-exists if-does-not-exist                 Function
                            external-format)
-     Opens and returns a stream to path, or possibly n i l if such a stream can't
+     Opens and returns a stream to path, or possibly nil if such a stream can't
      be created. The keyword arguments determine the properties of the stream as
      follows:
       : d i r e c t i o n symbol
@@ -13546,13 +13546,13 @@ Streams
                causes the existing file to be modified, starting at the end; : supersede,
                which causes a new file with the same name to be created, but the
                original file (probably) not to be deleted until the stream is closed; or
-               n i l , in which case no stream is created and open returns n i l .
+               nil , in which case no stream is created and open returns nil .
      : i f - d o e s - n o t - e x i s t symbol
                Tells what to do if no such file exists. Possible values: : error, the
                default if direction is : input or if-exists is : overwrite or : append;
                : c r e a t e , the default if direction is : output or : i o and if-exists is
-               neither : overwrite nor : append; or n i l , the default if direction is
-               : probe, in which case no stream is created and open returns n i l .
+               neither : overwrite nor : append; or nil , the default if direction is
+               : probe, in which case no stream is created and open returns nil .
      :external-format format
                Designates an external file format.          The only predefined format is
                :default.
@@ -13563,7 +13563,7 @@ Streams
        Returns true iff stream is an output stream.
  (peek-char &optional kind stream eof-error eof-value recursive) Function
        Returns a character from stream without removing it from the stream. If kind
-       is n i l , returns the first character seen; if t, consumes whitespace characters
+       is nil , returns the first character seen; if t, consumes whitespace characters
        and returns the first non-whitespace character; if a character, consumes all
        characters up to the first instance of it, then returns it. If the end of file is
        encountered, either signals an error or returns eof-value, depending on whether
@@ -13580,7 +13580,7 @@ Streams
       read-char was invoked by another input function.
 (read-char-no-hang feoptional stream eof-error eof-value                       Function
                                recursive)
-      Like read-char, but returns n i l immediately if there are no characters waiting
+      Like read-char, but returns nil immediately if there are no characters waiting
       in stream.
 (read-line feoptional stream eof-error eof-value recursive)                    Function
       Returns a string of all the characters up to the first newline (which is read,
@@ -13663,17 +13663,17 @@ Streams
 (y-or-n-p ^optional format forest args)                                                            Function
           Displays format, which should be a yes-or-no question but defaults to "", on
            *query-io* as if by calling format with args as the optional arguments.
-          Then prompts for a single letter, returning true or n i l depending on whether it
+          Then prompts for a single letter, returning true or nil depending on whether it
           corresponds to y or n, or prompting again if given an ambiguous response.
 Printer
 (copy-pprint-dispatch ftoptional pprint-dispatch)                                                  Function
           Returns a copy of the pprint dispatch table pprint-dispatch, which defaults
-          to * p r i n t - p p r i n t - d i s p a t c h * . If pprint-dispatch is n i l , copies the initial
+          to * p r i n t - p p r i n t - d i s p a t c h * . If pprint-dispatch is nil , copies the initial
           value of * p r i n t - p p r i n t - d i s p a t c h * .
 (format dest format ftrest args)                                                                   Function
           Writes output to a location depending on dest: if it is a stream, to that stream;
-          if t, to *standard-output*; if n i l , to a string, which is returned. Returns
-          n i l if it does not return a string. The format can be either a string or the kind
+          if t, to *standard-output*; if nil , to a string, which is returned. Returns
+          nil if it does not return a string. The format can be either a string or the kind
           of function that formatter might return. If it is a function, it is applied to the
           dest and args. If it is a string, it may contain directives, which typically consist
           of a ~, followed by prefix parameters separated from one another by commas,
@@ -13681,7 +13681,7 @@ Printer
 380                                   APPENDIX D
     prefix parameter can be: an integer; a character preceded by a single quote;
     a V or v, which represent the next argument (or the absence of a parameter
-    if the argument is n i l ) ; or a #, which represents the number of arguments
+    if the argument is nil ) ; or a #, which represents the number of arguments
     remaining. Prefix parameters can be omitted (leaving the commas), in which
     case they have default values. Trailing commas can also be omitted.
     The possible directives are:
@@ -13690,7 +13690,7 @@ Printer
            <3) by at least m (default: 0) instances of p (default: #\Space), plus more
            instances of p added in groups of g (default: 1) until the total number of
            characters (including the representation of the argument) is w (default: 0)
-           or more. With :, empty lists are printed as 0 instead of n i l .
+           or more. With :, empty lists are printed as 0 instead of nil .
     "wtg,m,pS
            Like "A, but prints the argument as if by p r i n l .
     "W
@@ -13847,13 +13847,13 @@ Printer
 ( p p r i n t - d i s p a t c h object ftoptional pprint-dispatch)                                   Function
             Returns the highest priority function in pprint-dispatch for which object is
             of the associated type. If pprint-dispatch is not supplied, uses the current
-            value of * p r i n t - p p r i n t - d i s p a t c h * ; if n i l , uses its initial value. If no
+            value of * p r i n t - p p r i n t - d i s p a t c h * ; if nil , uses its initial value. If no
             type in the dispatch table matches object, returns a function that prints it using
             p r i n t - o b j e c t . Returns a second value true iff the first comes from a dispatch
             table.
 (pprint-exit-if-list-exhausted)                                                                        Macro
             For use within a p p r i n t - l o g i c a l - b l o c k . Terminates the block if there is
-            nothing left to print; otherwise returns n i l .
+            nothing left to print; otherwise returns nil .
 ( p p r i n t - f i l l stream object ftoptional colon at)                                           Function
            Prints object to stream—in a distinctive way if it is a list and * p r i n t - p r e t t y *
            is true. Prints as many elements of the list on a line as possible, surrounded by
@@ -13893,10 +13893,10 @@ Printer
             Used within p p r i n t - l o g i c a l - b l o c k . If elements of the list being printed in
            the current logical block remain to be printed, returns the next element. If the
            remainder of the list is a non-nil atom, prints this atom preceded by a period,
-            and returns n i l . If * p r i n t - l e n g t h * is true and that many elements have
-            already been printed, prints an ellipsis and returns n i l . If * p r i n t - c i r c l e *
+            and returns nil . If * p r i n t - l e n g t h * is true and that many elements have
+            already been printed, prints an ellipsis and returns nil . If * p r i n t - c i r c l e *
            is true and the remainder of the list is shared structure, prints a period followed
-           by #n#, and returns n i l .
+           by #n#, and returns nil .
 ( p p r i n t - t a b keyword il i2 ^ o p t i o n a l stream)                                      Function
            If stream was created by p p r i n t - l o g i c a l - b l o c k and * p r i n t - p r e t t y *
            is true, tabs as if by the ~T format directive, with il and i2 as the pre-
@@ -13923,7 +13923,7 @@ Printer
             For displaying objects in #<.. .> syntax. All arguments are evaluated. Writes
             #< to stream; then, if type is true, writes a type label for object, then evaluates
             the expressions, which should display object on stream; then, if identity is true,
-            writes an identifying tag for object; finally writes >. Returns n i l .
+            writes an identifying tag for object; finally writes >. Returns nil .
 ( p r i n l object ftoptional stream)                                                      Function
            Displays object on stream in a way that allows it to be read by read, if possible.
 ( p r i n l - t o - s t r i n g object)                                                    Function
@@ -13932,7 +13932,7 @@ Printer
            Iffunction is true, adds an entry to pprint-dispatch (which defaults to * p r i n t -
            p p r i n t - d i s p a t c h * ) with the given type, function, and a priority of r (de-
            fault: 0). The function must take two arguments: a stream and an object to be
-           printed on it. If function is n i l , removes any entry for type. Returns n i l .
+           printed on it. If function is nil , removes any entry for type. Returns nil .
 (write object &key array base case circle escape gensym length                             Function
                                      level lines miser-width pprint-dispatch pretty
                                      radix readably right-margin stream)
@@ -13942,14 +13942,14 @@ Printer
            Like write, but sends its output to a string, which it returns.
 Reader
 (copy-readtable feoptional from (to))                                                      Function
-           If to is n i l returns a copy of the readtable from (default: *readtable*); if to
+           If to is nil returns a copy of the readtable from (default: *readtable*); if to
            is a readtable, returns it after copying from into it.
 ( g e t - d i s p a t c h - m a c r o - c h a r a c t e r charl char2                      Function
                                                            ftoptional readtable)
-           Returns the function (or n i l if there isn't one) that is called in readtable when
+           Returns the function (or nil if there isn't one) that is called in readtable when
            charl is followed by charl in the input.
 (get-macro-character char ftoptional readtable)                                            Function
-          Returns two values: the function (or n i l if there isn't one) that is called in
+          Returns two values: the function (or nil if there isn't one) that is called in
            readtable when char is encountered in the input, and a second value true iff
            char can be read as part of a symbol name.
 (make-dispatch-macro-character char feoptional nonterm                                     Function
@@ -14013,7 +14013,7 @@ System Construction
            in the file is printed to *standard-output*. The default external-format
            (: default) is the only predefined external format. After the file is compiled,
            • r e a d t a b l e * and *package* are restored to their original values. Returns
-           three values: the name of the output file (or n i l if the file could not be written);
+           three values: the name of the output file (or nil if the file could not be written);
            a second true iff compilation generated errors or warnings; and a third true iff
            compilation generated errors or warnings other than style warnings.
 (compile-file-pathname path &key output-file)                                              Function
@@ -14025,7 +14025,7 @@ System Construction
           will return true of functions defined in the file. If verbose is true, announces
           the loading of the file to *standard-output*. If print is true, describes the
           loading as it progresses to *standard-output*. If if-does-not-exist is true
-          (the default), signals an error if the file does not exist; if it is n i l , returns n i l .
+          (the default), signals an error if the file does not exist; if it is nil , returns nil .
           The default external-format (: d e f a u l t ) is the only predefined external format.
           Returns true if the file is loaded.
 (provide name)                                                                           [Function]
@@ -14063,7 +14063,7 @@ Environment
           Prints an indication of the object code generated foryh, which can be a function,
           a function name, or a lambda expression.
 (documentation object symbol)                                                           Generic Function
-          Returns the symbol documentation of object, or n i l if there is none. Settable.
+          Returns the symbol documentation of object, or nil if there is none. Settable.
 (dribble ftoptional path)                                                                       Function
           If path is given, begins sending a transcript of the Lisp session to the file it
           denotes; if there is no argument, closes the file.
@@ -14088,31 +14088,31 @@ Environment
  (inspect object)                                                                    Function
             An interactive version of describe that allows one to traverse complex objects.
  (lisp-implementation-type)                                                          Function
-            Returns a string indicating the Lisp implementation, or n i l .
+            Returns a string indicating the Lisp implementation, or nil .
  (lisp-implementation-version)                                                       Function
-            Returns a string indicating the Lisp version number, or n i l .
+            Returns a string indicating the Lisp version number, or nil .
  (long-site-name)                                                                    Function
             Like s h o r t - s i t e - n a m e , but verbose.
  (machine-instance)                                                                  Function
             Returns a string indicating the particular computer on which this Lisp session
-            is running, or n i l .
+            is running, or nil .
 (machine-type)                                                                       Function
             Returns a string indicating the general type of computer on which this Lisp
-            session is running, or n i l .
+            session is running, or nil .
 (machine-vers ion)                                                                   Function
             Returns a string indicating the version of computer on which this Lisp session
-            is running, or n i l .
+            is running, or nil .
 (room feoptional (arg -.default))                                                    Function
-           Prints an indication of state of memory. Terse if arg is n i l ; verbose if t.
+           Prints an indication of state of memory. Terse if arg is nil ; verbose if t.
 (short-site-name)                                                                    Function
-           Returns a string indicating the current physical site, or n i l .
+           Returns a string indicating the current physical site, or nil .
 ( s l e e p r)                                                                       Function
            Causes evaluation to pause for r seconds.
 (software-type)                                                                      Function
            Returns a string indicating the general type of the underlying software (e.g. OS),
-           or n i l .
+           or nil .
 (software-version)                                                                   Function
-           Returns a string indicating the version of the underlying software, or n i l .
+           Returns a string indicating the version of the underlying software, or nil .
 ( s t e p expression)                                                                  Macro
            Steps through the evaluation of expression, returning whatever value(s) it re-
            turns.
@@ -14127,7 +14127,7 @@ Environment
  (untrace fname*)                                                                      Macro
            Undoes a call to t r a c e . Given no arguments, untraces all traced functions.
  (user-homedir-pathname &optional host)                                              Function
-           Returns the pathname of the user's home directory, or n i l if no home directory
+           Returns the pathname of the user's home directory, or nil if no home directory
            can be found on host. The host argument is used as by make-pathname.
  Constants and Variables
 array-dimension-limit                                                                Constant
@@ -14145,7 +14145,7 @@ b o o l e - 1 . . .boole-xor                                                    
 *break-on-signals*                                                                   Variable
            A generalization of the old *break-on-warnings*. Its value should be a
           type specifier. Whenever a condition of that type is signalled, the debugger is
-          invoked. Initially n i l .
+          invoked. Initially nil .
 call-arguments-limit                                                                Constant
           Positive integer one greater than the maximum number of arguments in a
           function call. Implementation-dependent, but at least 50.
@@ -14154,7 +14154,7 @@ char-code-limit                                                                 
           Implementation-dependent.
 *compile-file-pathname*                                                              Variable
           During the evaluation of a call to compile-f i l e , the pathname made from the
-          first argument; otherwise n i l .
+          first argument; otherwise nil .
 *compile-file-truename*                                                              Variable
           The truename of *compile-f ile-pathname*.
 •compile-print*                                                                      Variable
@@ -14170,7 +14170,7 @@ char-code-limit                                                                 
        If non-nil, should be a function/of two arguments. When the debugger is about
        to be invoked,/will be called with the condition and/itself as arguments. If
       /returns normally, the debugger will be invoked. During the invocation of/,
-       *debugger-hook* will be bound to n i l .
+       *debugger-hook* will be bound to nil .
  •default-pathname-defaults*                                                               Variable
        Used as the default value when a function like make-pathname is not given a
        : d e f a u l t s argument.
@@ -14234,7 +14234,7 @@ least-positive-normalized-long-float                                            
        of the float formats. Implementation-dependent.
 •load-pathname*                                                                   Variable
        During the evaluation of a call to load, the pathname made from the first
-       argument; otherwise n i l .
+       argument; otherwise nil .
 •load-print*                                                                     Variable
        Used as the default value of the : p r i n t argument to load. Initial value is
        implementation-dependent.
@@ -14289,42 +14289,42 @@ pi                                                                              
            bol names as if returned by s t r i n g - c a p i t a l i z e .
 •print-circle*                                                                          Variable
            If true, shared structure will be displayed using the #«= and #«# read-macros.
-           Initial value is n i l .
+           Initial value is nil .
 • p r i n t -escape*                                                                    Variable
-           If n i l , everything is printed as if by p r i n c . Initially t.
+           If nil , everything is printed as if by p r i n c . Initially t.
                                   CONSTANTS AND VARIABLES                                  395
  •print-gensym+                                                                        Variable
         If true, #: is printed before unintemed symbols. Initially t.
  •print-length*                                                                        Variable
-        Either n i l (the initial value) or a positive integer. If an integer, up to that many
-        elements of an object will be displayed, the rest being elided. If n i l , there is
+        Either nil (the initial value) or a positive integer. If an integer, up to that many
+        elements of an object will be displayed, the rest being elided. If nil , there is
         no limit.
  •print-level*                                                                         Variable
-        Either n i l (the initial value) or a positive integer. If an integer, objects nested
-        up to that depth will be displayed, the rest being elided. If n i l , there is no
+        Either nil (the initial value) or a positive integer. If an integer, objects nested
+        up to that depth will be displayed, the rest being elided. If nil , there is no
         limit.
  •print-lines*                                                                         Variable
-       Either n i l (the initial value) or a positive integer. If an integer, only that many
+       Either nil (the initial value) or a positive integer. If an integer, only that many
        lines will be shown when an object is pretty-printed, the rest being elided. If
-       n i l , there is no limit.
+       nil , there is no limit.
  •print-miser-width*                                                                   Variable
-       Either n i l or a positive integer. If an integer, pretty-printer prints in a compact
+       Either nil or a positive integer. If an integer, pretty-printer prints in a compact
        style if fewer ems are available. Initial value is implementation-dependent.
 •print-pprint-dispatch*                                                               Variable
-       Either n i l or a pprint dispatch table. If the latter, it controls pretty-printing.
+       Either nil or a pprint dispatch table. If the latter, it controls pretty-printing.
        Initial value is a table that yields conventional output.
 •print-pretty^                                                                        Variable
        When true, objects will be pretty-printed. Initial value is implementation-
        dependent.
 •print-radix*                                                                         Variable
        If true, numbers will be printed with an indication of the radix in which they
-       are displayed. Initial value is n i l .
+       are displayed. Initial value is nil .
 •print-readably •                                                                     Variable
        If true, the printer must either generate readable output, or signal an error.
-       Initially n i l .
+       Initially nil .
 •print-right-margin*                                                                  Variable
-       Either n i l (the initial value) or a positive integer representing a number of
-       ems. If an integer, nothing will be printed past it; if n i l , the right margin is set
+       Either nil (the initial value) or a positive integer representing a number of
+       ems. If an integer, nothing will be printed past it; if nil , the right margin is set
        by the output stream.
 •query-io*                                                                            Variable
        Stream on which to ask for and receive user input.
@@ -14340,7 +14340,7 @@ pi                                                                              
  *read-eval*                                                                        Variable
         If nil, #. signals an error. Initially t.
  •read-suppress*                                                                    Variable
-        If true, read becomes more accepting of syntactic diversity. Initially n i l .
+        If true, read becomes more accepting of syntactic diversity. Initially nil .
  •readtable*                                                                        Variable
         The current readtable. Initially a readtable defining standard Common Lisp
         syntax.
@@ -14647,12 +14647,12 @@ should be considered recommended reading.
      (defstruct marble
          color)
      The following function takes a list of marbles and returns their color, if they all
-     have the same color, or n i l if they have different colors:
+     have the same color, or nil if they have different colors:
      (defun uniform-color ( 1 s t )
           ( l e t ((c (marble-color (car 1 s t ) ) ) )
               ( d o l i s t (m (cdr 1 s t ) )
                   (unless (eql (marble-color m) c)
-                       (return n i l ) ) )
+                       (return nil ) ) )
               c))
      Although uniform-color does not refer to a particular place, it is both rea-
      sonable and possible to have a call to it as the first argument to setf. Having
@@ -14727,7 +14727,7 @@ should be considered recommended reading.
      when this list was passed as the second argument to +.
  123 Newer implementations of Common Lisp include a variable *read-eval* that
      can be used to turn off the #. read-macro. When calling read-from-string
-     on user input, it is wise to bind *read-eval* to n i l . Otherwise the user could
+     on user input, it is wise to bind *read-eval* to nil . Otherwise the user could
      cause side-effects by using #. in the input.
  125 There are a number of ingenious algorithms for fast string-matching, but string-
      matching in text files is one of the cases where the brute-force approach is still
@@ -15349,7 +15349,7 @@ double-float-negative-epsiloncon-                              modifying constan
                stant 392                                       modifying shared structure 199
 dpb function 348                                               modifying traversed sequence 199
 d r i b b l e function 389                                     multiple evaluation 167
-Dylan 109                                                      involving n i l 290,292
+Dylan 109                                                      involving nil 290,292
 dynamic-extent declaration 225                                 no longer possible 5
 dynamic allocation—see automatic mem-                          obsolete inlined functions 217
                ory management                                  omitting base case in recursion 43,290
@@ -15744,9 +15744,9 @@ netnews 407
                                                               numberp function 351, 20
 next-method-p function 334, 188
                                                               numerator function 351, 146
-n i l constant 394, 12, 33, 292
+nil constant 394, 12, 33, 292
                                                               nunion function 360, 222
-n i l ! 162
+nil ! 162
 n i n t e r s e c t i o n function 357, 222
 n i n t h function 357,40                                     object-oriented programming 176
 no-applicable-method generic function                               analogy to hardware 176
