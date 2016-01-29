@@ -2604,29 +2604,29 @@ representing its components:
            "Jul" "aug" "sep" "oct" "nov" "dec"))
    (defun parse-month (str)
        (let ((p (position str month-names
-                                         :test #'string-equal)))
+                          :test #'string-equal)))
            (if p
-                    (+ p 1)
-                    nil)))
+               (+ p 1)
+               nil)))
                               Figure 4.3: Functions for parsing dates.
-> ( p a r s e - d a t e "16 Aug 1980")
+> (parse-date "16 Aug 1980")
  (16 8 1980)
 It uses tokens to break up a date string, and then calls parse-month
-and p a r s e - i n t e g e r to interpret the elements. To find the month, it calls
+and parse-integer to interpret the elements. To find the month, it calls
 parse-month, which is not case-sensitive because it uses s t r i n g - e q u a l to
 match the name of the month. To find the day and year, it calls the built-in
-p a r s e - i n t e g e r , which takes a string and returns the corresponding integer.
+parse-integer, which takes a string and returns the corresponding integer.
      If we had to write code to parse integers, we might say something like:
- (defun r e a d - i n t e g e r ( s t r )
-    ( i f (every # ' d i g i t - c h a r - p s t r )
+ (defun read-integer(str)
+    ( if (every # 'digit-char-pstr)
              ( l e t ((accum 0))
-                 (dotimes (pos ( l e n g t h s t r ) )
-                     ( s e t f accum (+ (* accum 10)
-                                             ( d i g i t - c h a r - p (char s t r p o s ) ) ) ) )
+                 (dotimes (pos (lengthstr))
+                     (setf accum (+ (* accum 10)
+                        (digit-char-p (char strpos)))))
                  accum)
             nil))
 This definition illustrates how to get from a character to a number in Common
-Lisp—the function d i g i t - c h a r - p not only tests whether a character is a
+Lisp—the function digit-char-p not only tests whether a character is a
 digit, but returns the corresponding integer.
  4.6                                    STRUCTURES                                 69
  4.6 Structures
@@ -2638,26 +2638,26 @@ digit, but returns the corresponding integer.
  (defun block-height (b) (svref b 0))
  and so on. You can think of a structure as a vector in which all these kinds of
 functions get defined for you.
-      To define a structure, we use def s t r u c t . In the simplest case we just
+      To define a structure, we use def struct . In the simplest case we just
 give the name of the structure and the names of the fields:
  (defstruct point
     x
     y)
 This defines a point to be a structure with twofields,x and y. It also implicitly
-defines the functions make-point, p o i n t - p , copy-point, p o i n t - x , and
+defines the functions make-point, point-p , copy-point, point-x , and
 point-y.
       Section 2.3 mentioned that Lisp programs could write Lisp programs.
 This is one of the most conspicuous examples we have seen so far. When you
-call def s t r u c t , it automatically writes code defining several other functions.
+call def struct, it automatically writes code defining several other functions.
 With macros you will be able to do the same thing yourself. (You could even
-write d e f s t r u c t if you had to.)
+write defstruct if you had to.)
       Each call to make-point will return a new p o i n t . We can specify the
 values of individual fields by giving the corresponding keyword arguments:
 > (setf p (make-point :x 0 :y 0))
 #S(POINT X 0 Y 0)
 The access functions for p o i n t fields are defined not only to retrieve values,
 but to work with setf.
-> ( p o i n t - x p)
+> (point-x p)
 0
 > (setf (point-y p) 2)
 2
@@ -2665,11 +2665,11 @@ but to work with setf.
 #S(POINT X 0 Y 2)
      Defining a structure also defines a type of that name. Each point will
 be of type point, then s t r u c t u r e , then atom, then t . So as well as using
-p o i n t - p to test whether something is a point,
+point - p to test whether something is a point,
  70                            SPECIALIZED DATA STRUCTURES
- > ( p o i n t - p p)
+ > (point-p p)
  T
- > (typep p ' p o i n t )
+ > (typep p 'point)
  T
  we can also use general-purpose functions like typep.
        We can specify default values for structure fields by enclosing the field
@@ -2686,7 +2686,7 @@ p o i n t - p to test whether something is a point,
  #S(POLEMIC TYPE SCATHING EFFECT NIL)
        We can also control things like the way a structure is displayed, and the
  prefix used in the names of the access functions it creates. Here is a more
- elaborate definition for p o i n t that does both:
+ elaborate definition for point that does both:
  (defstruct (point (:cone-name p)
                    (:print-function print-point))
      (x 0)
@@ -2695,10 +2695,10 @@ p o i n t - p to test whether something is a point,
      (format stream "#<~A,~A>M (px p) (py p)))
 The : cone-name argument specifies what should be concatenated to the
 front of the field names to make access functions for them. By default it was
-point - ; now it will be simply p. Not using the default makes your code a
+point- ; now it will be simply p. Not using the default makes your code a
 little less readable, so you would only want to do this kind of thing if you're
 going to be using the access functions constantly.
-      The : print - function is the name of the function that should be used to
+      The : print-function is the name of the function that should be used to
 print a point when it has to be displayed—e.g. by the toplevel. This function
 must take three arguments: the structure to be printed, the place where it is
 to be printed, and a third argument that can usually be ignored.2 We will
@@ -2706,13 +2706,15 @@ to be printed, and a third argument that can usually be ignored.2 We will
       In ANSI Common Lisp, you can give instead a : print-object argument, which only takes
 the first two arguments. There is also a macro print-unreadable-object , which should be
 used, when available, to display objects in # < . . . > syntax.
- 4.7                            EXAMPLE: BINARY SEARCH TREES                        71
-                                              CO
-                                           4
-                                             ) CO
-                                       2ij   CO CO
-                                CO         3 )     \7J
-                             Figure 4.4: A binary search tree.
+ 4.7     EXAMPLE: BINARY SEARCH TREES                        71
+                 (5) 
+                /  \
+              (4)   (8)
+              /     / \
+            (2)   (6)  (9)
+            / \     \
+          (1) (3)   (7)
+         Figure 4.4: A binary search tree.
 deal with streams in Section 7.1. For now, suffice it to say that the stream
 argument can simply be passed on to format.
       The function print-point will display points in an abbreviated form:
@@ -5482,7 +5484,7 @@ vector whose components are x, y, and z:
 And we use mag in d i s t a n c e , which returns the distance between two points
 in 3-space. (Defining the point structure to have a : cone-name of nil
 means that the access functions for the fields will have the same names as the
-fields: x instead of p o i n t - x , for example.)
+fields: x instead of point - x , for example.)
       Finally, minroot takes three reals a, b, and c, and returns the smallest
 real x for which ax2 H- b;t + c = 0. When a is nonzero, the roots of this
 equation are yielded by the familiar formula:
@@ -7908,10 +7910,10 @@ possibility of creating things on the fly. What you have to avoid is allocating
      For example, when circumstances allow us to impose a limit on the size
  of a stack, we could have the stack grow and shrink along a pre-allocated
  vector, instead of building it out of conses. Common Lisp has built-in support
- for using vectors as stacks. If we give the optional f i l l - p o i n t e r argument
+ for using vectors as stacks. If we give the optional f i l l - point e r argument
  to make-array, we will get a vector that seems to be expandable. The first
  argument to make-array specifies the amount of storage to be allocated for
- the vector, but the f i l l - p o i n t e r , when given, specifies the initial effective
+ the vector, but the f i l l - point e r , when given, specifies the initial effective
  length:
  > (setf *print-array* t)
  T
@@ -7939,9 +7941,9 @@ make-array, we can push new elements onto the vector; when it runs out
 of space, vector-push will return nil . We could push up to eight more
 elements onto vec at this point.
  224                                                     SPEED
-    (defconstant d i e t (make-array 25000 : f i l l - p o i n t e r 0))
+    (defconstant d i e t (make-array 25000 : f i l l - point e r 0))
     (defun read-words (from)
-         ( s e t f ( f i l l - p o i n t e r d i e t ) 0)
+         ( s e t f ( f i l l - point e r d i e t ) 0)
          ( w i t h - o p e n - f i l e ( i n from : d i r e c t i o n :input)
              (do ((w ( r e a d - l i n e i n nil :eof)
                              (read-line in nil :eof)))
@@ -8069,7 +8071,7 @@ shouldn't cons at all.
 the second version, harbor is a hash table instead of a list, so all the space
 for it will be allocated at compile-time. A thousand ship structures will
 also be created at compile-time, and stored in the vector pool. (If the
- : f i l l - p o i n t e r argument is t, the fill pointer points to the end of the vector.)
+ : f i l l - point e r argument is t, the fill pointer points to the end of the vector.)
 Now when e n t e r needs a new structure, it gets one from the pool instead of
 calling make-ship. And when leave removes a ship from harbor, instead
 of being thrown away, it is sent back to the pool.
@@ -12919,7 +12921,7 @@ Arrays
            : i n i t i a l - c o n t e n t s seq
                      As in make-array, which means that the existing elements of array will
                      be overwritten.
-           : f i l l - p o i n t e r object
+           : f i l l - point e r object
                      If object is nil , the fill pointer (if any) will remain the same.
            : d i s p l a c e d - t o array!
                      If array originally was displaced, but array! is nil , the corresponding
@@ -12943,7 +12945,7 @@ Arrays
           Returns nil and 0 if array is not displaced.
 (array-element-type array)                                                                      Function
           Returns the element type of array.
-( a r r a y - h a s - f i l l - p o i n t e r - p array)                                        Function
+( a r r a y - h a s - f i l l - point e r - p array)                                        Function
           Returns true iff array has a fill pointer.
 (array-in-bounds-p array ftrest is)                                                             Function
           Returns true iff the same arguments would be valid in a call to aref.
@@ -12989,7 +12991,7 @@ Arrays
             Like b i t - a n d , but analogous to logxor.
 ( b i t - v e c t o r - p object)                                                       Function
             Returns true iff object is a bit vector.
-( f i l l - p o i n t e r vector)                                                       Function
+( f i l l - point e r vector)                                                       Function
             Returns the fill pointer of vector. Settable, but only if vector already has a fill
             pointer.
                                                          ARRAYS                                  363
@@ -13013,7 +13015,7 @@ Arrays
            : adjustable object
                       If object is true, the array is guaranteed to be adjustable; it may be
                       anyway.
-           . • f i l l - p o i n t e r object
+           . • f i l l - point e r object
                       If object is true, the array (it must be a vector) will have a fill pointer. If
                       object is an integer between zero and the length of the vector, it will be
                       the initial value of the fill pointer.
@@ -15437,7 +15439,7 @@ f i l e - s t r i n g - l e n g t h generic function 375
 f i l e - w r i t e - d a t e function 374
                                                                     anonymous 26
 f i l l function 367
-f i l l - p o i n t e r function 362                                calling 9
+f i l l - point e r function 362                                calling 9
 fill-pointers 223                                                  compiled 113
 f i l t e r 105                                                     denning—see def un
 find function 367, 65                                              documentation strings of 100
