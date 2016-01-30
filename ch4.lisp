@@ -1,7 +1,9 @@
 ;; 4 Specialized Data Structures
 (setf arr (make-array '(3 3) :initial-element nil))
-(aref arr 1 1)
-(setf (aref arr 1) 20)
+(aref arr 1 0)
+(setf (aref arr 1 0) 20)
+
+(array-dimensions arr)
 
 ;; If you want just a one-dimensional array, you can give an
 ;; integer instead of a list as the first argument to make-array
@@ -468,5 +470,16 @@
 ;;    are (n n)) and rotate it 90° clockwise:
 ;;  > (quarter-turn #2A((a b) (c d)))
 ;;  #2A((C A) (D B))
-(defun quarter-turn (sa)
-  )
+(defun quarter-turn (a)
+  (and (arrayp a)
+       (let ((dimensions (array-dimensions a)))
+	 (and (= 2 (length dimensions))
+	      (apply #'= dimensions)
+	      (let ((turn-arr (make-array dimensions :initial-element nil))
+		    (dimension (car dimensions)))
+		(loop for i from 0 to (- dimension 1) do
+		     (loop for j from 0 to (- dimension 1) do
+			  (setf (aref turn-arr i j)
+				(aref a (- (- dimension 1) j) i))))
+		turn-arr)))))
+
