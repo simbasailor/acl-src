@@ -413,3 +413,60 @@
 (maphash #'(lambda (k v)
              (format t "~A = ~A~%" k v))
          ht)
+
+;; Hash tables can accommodate any number of elements, because they are
+;; expanded when they run out of space. If you want to ensure that a hash
+;; table starts with room for a particular number of elents, you can give
+;; the optional :size augument to make-hash-table. There are two reasons
+;; to do this:
+;;   because you know the hash table is going to be huge, and you want to
+;; avoid expanding it;
+;;   or because you know the hash table is going to be small, and you don't
+;; want to waste memory.
+;; The :size argument specifies not the number of spaces in the hash table,
+;; but the number of elements, on the average, it will be able to accommodate
+;; before being expanded.
+(setf ht-sz (make-hash-table :size 2))
+(setf (gethash 'color ht-sz) 'red
+      (gethash 'name ht-sz) "testname")
+(setf (gethash 'testsupport? ht-sz) "accommodate")
+
+;; Like any structure involved in lookups, hash table must have some notion
+;; of equality for keys. By default they use eql, but you can specify that a
+;; hash table should use eq, equal, or equalp instead by providing the
+;; optional :test argument:
+(setf writers (make-hash-table :test #'equal))
+(setf (gethash '(ralph waldo emerson) writers) t)
+
+;; This is one of the trade-offs we have to make for the efficiency of hash
+;; table. With lists, we could specify the equality predicate in call to
+;; memeber. With hash tables we have to decide ahead of time, and specify it
+;; when the hash table is created.
+;; Most of the trade-offs in lisp programming (or life, for that matter) have
+;; the character. Initially you try to keep things fluid, even at the cost
+;; of efficiency. Later, as the program hardens, you can sacrifice some
+;; flexibility for speed.
+
+;; Summary
+;; 1. Common Lisp supports arrays of at least 7 dimensions.One-dimensional
+;;    arrays are called vectors.
+;; 2. Strings are vectors of characters. Characters are objects in their
+;;    own right.
+;; 3. Sequences include lists and vectors. Many sequence functions take
+;;    keyword arguments frome a standard set.
+;; 4. Parsing is easy in Lisp because it has so many functions that work
+;;    on strings.
+;; 5. Calling defstruct defines a structure with named fields. It is a
+;;    good example of a program that wirtes programs.
+;; 6. Binary search trees are useful for maintaining a sorted collection
+;;    of objects.
+;; 7. Hash tables provide a more efficient way to represent sets and mappings.
+
+;; Chapter 4 Exercises
+
+;; 1. Define a function to take a square array (an array whose dimensions
+;;    are (n n)) and rotate it 90° clockwise:
+;;  > (quarter-turn #2A((a b) (c d)))
+;;  #2A((C A) (D B))
+(defun quarter-turn (sa)
+  )
