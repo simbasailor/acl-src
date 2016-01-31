@@ -483,3 +483,9 @@
 				(aref a (- (- dimension 1) j) i))))
 		turn-arr)))))
 
+;; 2. Read the description of reduce on page 368, then use it to define:
+;;   (a) copy-list
+;;   (b) reverse (for lists)
+
+(defun my-copy-list (lst)
+  )
