@@ -303,3 +303,38 @@
 	      (cons n path))
 	  (cdr (assoc node net))))
 
+;; Summary
+;; 1. A cons is a two-part data structure. List are made of conses linked
+;;    together.
+;; 2. Teh predicate equal is less strict than eql. Essentially, it returns
+;;    true if its arguments print the same.
+;; 3. All Lisp objects behave like pinters. You never have to manipulate
+;;    pointers explictly.
+;; 4. You can copy lists with copy-list, and join their elements with append.
+;; 5. Run-length encoding is a simple compression algorithm for use in
+;;    restaurants.
+;; 6. Common Lisp has a variety of access functions defined in terms of
+;;    car and cdr.
+;; 7. Mapping functions apply a function to successive elements, or
+;;    successive tails, of a list.
+;; 8. Operations on nested lists are sometimes considered as operations
+;;    on trees.
+;; 9. To jedge a recursive function, you only have to consider whether
+;;    it covers all the cases.
+;; 10.Lists can be used to represent sets. Several built-in functions view
+;;    lists this way.
+;; 11.Keyword arguments are optional, and are identified not by position,
+;;    but by symbolic tags that precede them.
+;; 12.Lists are a subtype of sequences. Common Lisp has a large number
+;;    of sequence function.
+;; 13.A cons that isn't a proper list is called a dotted list.
+;; 14.Lists with conses as elements can be used to represent mappings.
+;;    Such lists are called assoc-lists.
+;; 15.Automatic memory management saves you form deling with memory
+;;    allocation, but generating excessive garbage can make programs slow.
+
+;; Exercises
+;; 2. Write a version of union that preserves the order of the elements
+;;    in the original lists:
+;;  > (new-union '(a b c) '(b a d))
+(defun new-union (lst))
